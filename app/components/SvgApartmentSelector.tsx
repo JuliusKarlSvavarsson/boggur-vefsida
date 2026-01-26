@@ -14,9 +14,9 @@ type SvgApartmentSelectorProps = {
 };
 
 const statusFill: Record<ApartmentStatus, string> = {
-  available: "#22c55e",
-  sold: "#ef4444",
-  reserved: "#facc15",
+  available: "#10B981",
+  sold: "#EF4444",
+  reserved: "#FACC15",
 };
 
 export default function SvgApartmentSelector({
@@ -40,7 +40,7 @@ export default function SvgApartmentSelector({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between text-xs text-slate-400">
+      <div className="flex items-center justify-between text-xs text-slate-500">
         <span className="font-medium uppercase tracking-wide">
           {floorLabel ?? "Current floor"}
         </span>
@@ -57,16 +57,7 @@ export default function SvgApartmentSelector({
             <stop offset="100%" stopColor="#020617" />
           </linearGradient>
         </defs>
-        <rect
-          x={2}
-          y={2}
-          width={96}
-          height={96}
-          rx={3}
-          fill="url(#building-bg)"
-          stroke="#1f2937"
-          strokeWidth={0.5}
-        />
+        <rect x={2} y={2} width={96} height={96} rx={4} fill="url(#building-bg)" stroke="#E5E7EB" strokeWidth={0.6} />
         {apartments.map((apt, index) => {
           const col = index % cols;
           const row = Math.floor(index / cols);
@@ -95,10 +86,10 @@ export default function SvgApartmentSelector({
                 rx={2}
                 ry={2}
                 fill={fill}
-                opacity={isSelected ? 0.95 : 0.85}
-                stroke={isSelected ? "#f97316" : "#020617"}
-                strokeWidth={isSelected ? 1.5 : 0.8}
-                className="transition-opacity hover:opacity-100"
+                opacity={isSelected ? 0.98 : 0.9}
+                stroke={isSelected ? "#F97316" : "#E5E7EB"}
+                strokeWidth={isSelected ? 1.6 : 0.8}
+                className="transition-transform transition-opacity duration-200 hover:opacity-100 hover:translate-y-[-0.5]"
               />
               <text
                 x={x + w / 2}
@@ -129,7 +120,7 @@ export default function SvgApartmentSelector({
           );
         })}
       </svg>
-      <div className="flex flex-wrap gap-3 text-xs text-slate-400">
+      <div className="flex flex-wrap gap-3 text-xs text-slate-500">
         <span className="inline-flex items-center gap-1">
           <span className="h-3 w-3 rounded-sm bg-emerald-500" /> Available
         </span>

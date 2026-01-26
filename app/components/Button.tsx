@@ -9,13 +9,13 @@ type ButtonProps = {
 
 export default function Button({ children, href, variant = "primary" }: ButtonProps) {
   const baseClasses =
-    "inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950";
+    "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold tracking-tight shadow-sm transition-transform transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50";
 
   const variants: Record<string, string> = {
     primary:
-      "bg-primary text-white hover:bg-primary-light active:bg-primary-dark",
+      "bg-primary text-white hover:bg-primary-light active:bg-primary-dark hover:-translate-y-0.5",
     secondary:
-      "bg-slate-800 text-slate-100 hover:bg-slate-700 active:bg-slate-600",
+      "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 active:bg-slate-100 hover:-translate-y-0.5",
   };
 
   const className = `${baseClasses} ${variants[variant]}`;

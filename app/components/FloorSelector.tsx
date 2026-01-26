@@ -10,9 +10,9 @@ export default function FloorSelector({ floors, selectedFloor, onSelectFloor }: 
   if (floors.length === 1) {
     const floor = floors[0];
     return (
-      <div className="flex items-center gap-2 text-xs text-slate-400">
+      <div className="flex items-center gap-2 text-xs text-slate-500">
         <span className="font-medium uppercase tracking-wide">Floor</span>
-        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-slate-200">
+        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-slate-800">
           {floor.label ?? `Level ${floor.floorNumber}`}
         </span>
       </div>
@@ -21,7 +21,7 @@ export default function FloorSelector({ floors, selectedFloor, onSelectFloor }: 
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
+      <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
         Floor
       </span>
       <div className="flex flex-wrap gap-2">
@@ -34,8 +34,8 @@ export default function FloorSelector({ floors, selectedFloor, onSelectFloor }: 
               onClick={() => onSelectFloor(floor.floorNumber)}
               className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
                 isActive
-                  ? "border-primary bg-primary text-slate-950"
-                  : "border-slate-700 bg-slate-900 text-slate-200 hover:border-primary hover:text-primary"
+                  ? "border-primary bg-primary text-white"
+                  : "border-slate-200 bg-white text-slate-800 hover:border-primary hover:text-primary"
               }`}
             >
               {floor.label ?? `Level ${floor.floorNumber}`}

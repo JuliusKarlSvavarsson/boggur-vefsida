@@ -41,8 +41,8 @@ export default function ApartmentCard({
   const statusClass = status ? statusClassMap[status] : undefined;
 
   return (
-    <article className="flex flex-col gap-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4 shadow-sm">
-      <div className="overflow-hidden rounded-md border border-slate-800 bg-slate-900">
+    <article className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-slate-100 bg-slate-50">
         {imageSrc ? (
           <Image
             src={imageSrc}

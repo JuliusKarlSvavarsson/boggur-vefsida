@@ -7,7 +7,7 @@ type ParkingVisualizerProps = {
 
 export default function ParkingVisualizer({ spotLabel, imageSrc }: ParkingVisualizerProps) {
   return (
-    <div className="overflow-hidden rounded-md border border-slate-800 bg-slate-900/80">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
       <div className="relative h-32 w-full sm:h-40">
         {imageSrc ? (
           <Image
@@ -18,7 +18,7 @@ export default function ParkingVisualizer({ spotLabel, imageSrc }: ParkingVisual
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-slate-900 text-xs text-slate-300">
+          <div className="flex h-full w-full items-center justify-center bg-slate-100 text-xs text-slate-500">
             Parking layout placeholder
           </div>
         )}
