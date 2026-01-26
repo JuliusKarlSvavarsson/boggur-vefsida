@@ -1,15 +1,20 @@
+import TeamCard from "../components/TeamCard";
+
 const team = [
   {
     name: "Team Member One",
     role: "Placeholder Role",
+    imageSrc: "/images/team/member1.jpg",
   },
   {
     name: "Team Member Two",
     role: "Placeholder Role",
+    imageSrc: "/images/team/member2.jpg",
   },
   {
     name: "Team Member Three",
     role: "Placeholder Role",
+    imageSrc: "/images/team/member3.jpg",
   },
 ];
 
@@ -28,18 +33,7 @@ export default function TeamPage() {
       </header>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {team.map((member) => (
-          <article
-            key={member.name}
-            className="rounded-lg border border-slate-800 bg-slate-900/60 p-4 text-sm text-slate-300"
-          >
-            <div className="mb-3 h-16 w-16 rounded-full bg-slate-800" />
-            <h2 className="text-base font-semibold text-slate-50">
-              {member.name}
-            </h2>
-            <p className="text-xs uppercase tracking-wide text-slate-400">
-              {member.role}
-            </p>
-          </article>
+          <TeamCard key={member.name} {...member} />
         ))}
       </div>
     </section>

@@ -1,9 +1,14 @@
 import Button from "./components/Button";
 import ProjectCard from "./components/ProjectCard";
+import HeroBanner from "./components/HeroBanner";
 
 export default function HomePage() {
   return (
     <div className="space-y-10">
+      <HeroBanner
+        title="Modern construction & real estate presentation for 2026."
+        subtitle="This hero banner uses a placeholder image from /public/images/hero/hero-banner.jpg and will be replaced with real project visuals later."
+      />
       <section className="grid gap-8 lg:grid-cols-2 lg:items-center">
         <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">

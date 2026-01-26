@@ -5,6 +5,7 @@ const placeholderProjects = [
     name: "Harborfront Apartments",
     location: "Reykjavík — Placeholder",
     status: "Available Soon",
+    imageSrc: "/images/projects/project1.jpg",
   },
   {
     name: "Skyline Residences",

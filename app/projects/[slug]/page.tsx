@@ -1,3 +1,5 @@
+import ApartmentCard from "../../components/ApartmentCard";
+
 type ProjectPageProps = {
   params: {
     slug: string;
@@ -8,7 +10,7 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
   const { slug } = params;
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-8">
       <header className="space-y-2">
         <p className="text-xs font-mono uppercase tracking-[0.25em] text-primary">
           Project Placeholder
@@ -37,6 +39,36 @@ export default function ProjectDetailPage({ params }: ProjectPageProps) {
             status, floorplan, parking spots). This will be populated
             dynamically later.
           </p>
+        </div>
+      </div>
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-slate-50 sm:text-lg">
+          Sample apartments
+        </h2>
+        <p className="text-sm text-slate-300">
+          These are placeholder apartments for this project. In a future
+          version, this list will be driven by real data from the admin panel
+          and Neon database.
+        </p>
+        <div className="grid gap-4 md:grid-cols-3">
+          <ApartmentCard
+            title="Apartment A1"
+            description="3-room apartment with balcony and harbor view. Placeholder content."
+            priceLabel="From 59.900.000 kr"
+            imageSrc="/images/apartments/floorplan1.png"
+          />
+          <ApartmentCard
+            title="Apartment B2"
+            description="2-room corner unit. Placeholder description for layout and size."
+            priceLabel="From 49.900.000 kr"
+            imageSrc="/images/apartments/floorplan1.png"
+          />
+          <ApartmentCard
+            title="Apartment C3"
+            description="Family-friendly 4-room apartment. Placeholder for detailed specs."
+            priceLabel="From 69.900.000 kr"
+            imageSrc="/images/apartments/floorplan1.png"
+          />
         </div>
       </div>
     </section>
