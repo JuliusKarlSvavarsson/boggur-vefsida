@@ -1,112 +1,62 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import Button from "./components/Button";
 import ProjectCard from "./components/ProjectCard";
 import TeamCard from "./components/TeamCard";
 import HeroSlider from "./components/HeroSlider";
 
-const homeProjects = [
-  {
-    name: "Urban Apartments",
-    location: "Reykjavík — Placeholder",
-    status: "Planned",
-    slug: "urban-apartments",
-  },
-  {
-    name: "Harbor View Residences",
-    location: "Reykjavík — Placeholder",
-    status: "Coming Soon",
-    slug: "harbor-view-residences",
-  },
-  {
-    name: "Suburban Family Homes",
-    location: "Greater Reykjavík — Placeholder",
-    status: "In Design",
-    slug: "suburban-family-homes",
-  },
-  {
-    name: "Commercial Complex",
-    location: "Reykjavík — Placeholder",
-    status: "Concept",
-    slug: "commercial-complex",
-  },
-];
+type ApiProject = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  image: string | null;
+  location: string | null;
+  status: string | null;
+};
 
-const priorityServices = [
-  {
-    title: "Project development",
-    description:
-      "End-to-end coordination from early studies through detailed design and construction.",
-  },
-  {
-    title: "Sales & marketing",
-    description:
-      "Planning of apartment mix, pricing strategy, and sales material tailored to each project.",
-  },
-  {
-    title: "Buyer guidance",
-    description:
-      "Support for buyers around floorplan selection, options, and communication.",
-  },
-  {
-    title: "Advisory",
-    description:
-      "Support around financing and structuring real estate projects in cooperation with partners.",
-  },
-];
+type ApiService = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+};
 
-const teamMembers = [
-  {
-    name: "Fannar",
-    role: "Owner",
-    imageSrc: "/images/team/fannar_reg.jpeg",
-  },
-  {
-    name: "Julius",
-    role: "Owner",
-    imageSrc: "/images/team/julius_reg.jpeg",
-  },
-  {
-    name: "Numi",
-    role: "Owner",
-    imageSrc: "/images/team/numi_reg.jpeg",
-  },
-  {
-    name: "Ragnar",
-    role: "Owner",
-    imageSrc: "/images/team/ragnar_reg.jpeg",
-  },
-  {
-    name: "Haukur",
-    role: "Owner",
-    imageSrc: "/images/team/haukur_reg.jpeg",
-  },
-  {
-    name: "Orvar",
-    role: "Owner",
-    imageSrc: "/images/team/orvar_reg.jpeg",
-  },
-];
+type ApiTeamMember = {
+  id: string;
+  name: string;
+  role: string;
+  image: string | null;
+};
 
-const otherServices = [
-  {
-    title: "Consulting for investors",
-    description: "Bespoke consulting services around specific projects or portfolios.",
-  },
-  {
-    title: "Feasibility studies",
-    description: "Early-stage analysis of location, zoning, and potential layouts.",
-  },
-  {
-    title: "Partnership structures",
-    description: "Structuring cooperation between different parties around a project.",
-  },
-  {
-    title: "Other advisory",
-    description: "Placeholder for additional services that may be added later.",
-  },
-];
+export default async function HomePage() {
+  const headersList = headers();
+  const host = headersList.get("host") ?? "localhost:3000";
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+  const baseUrl = `${protocol}://${host}`;
 
-export default function HomePage() {
+  const [projectsRes, servicesRes, otherServicesRes, teamRes] = await Promise.all([
+    fetch(`${baseUrl}/api/projects`, { cache: "no-store" }),
+    fetch(`${baseUrl}/api/services`, { cache: "no-store" }),
+    fetch(`${baseUrl}/api/other_services`, { cache: "no-store" }),
+    fetch(`${baseUrl}/api/team_members`, { cache: "no-store" }),
+  ]);
+
+  if (!projectsRes.ok) throw new Error("Failed to fetch projects for Home page");
+  if (!servicesRes.ok) throw new Error("Failed to fetch services for Home page");
+  if (!otherServicesRes.ok) throw new Error("Failed to fetch other services for Home page");
+  if (!teamRes.ok) throw new Error("Failed to fetch team for Home page");
+
+  const projects: ApiProject[] = await projectsRes.json();
+  const services: ApiService[] = await servicesRes.json();
+  const otherServices: ApiService[] = await otherServicesRes.json();
+  const team: ApiTeamMember[] = await teamRes.json();
+
+  const priorityServices = services;
+
+  // Show up to 3 featured projects on the home page
+  const featuredProjects = projects.slice(0, 3);
+
   return (
     <div className="-mx-4 space-y-0 sm:-mx-6 lg:-mx-12">
       {/* 1. Hero / slider */}
@@ -134,12 +84,14 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {homeProjects.map((project) => (
-              <Link key={project.slug} href={`/projects/${project.slug}`}>
+            {featuredProjects.map((project) => (
+              <Link key={project.id} href={`/projects/${project.slug}`}>
                 <ProjectCard
-                  name={project.name}
-                  location={project.location}
-                  status={project.status}
+                  name={project.title}
+                  location={project.location ?? ""}
+                  status={project.status ?? ""}
+                  description={project.description ?? undefined}
+                  imageSrc={project.image ?? undefined}
                 />
               </Link>
             ))}
@@ -166,7 +118,7 @@ export default function HomePage() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {priorityServices.map((service) => (
               <div
-                key={service.title}
+                key={service.id}
                 className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 h-32 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10" />
@@ -174,7 +126,7 @@ export default function HomePage() {
                   {service.title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  {service.description}
+                  {service.description ?? "Service description coming soon."}
                 </p>
               </div>
             ))}
@@ -199,8 +151,13 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {teamMembers.map((member) => (
-              <TeamCard key={member.name} {...member} />
+            {team.map((member) => (
+              <TeamCard
+                key={member.id}
+                name={member.name}
+                role={member.role}
+                imageSrc={member.image ?? undefined}
+              />
             ))}
           </div>
         </div>
@@ -225,7 +182,7 @@ export default function HomePage() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {otherServices.map((service) => (
               <Link
-                key={service.title}
+                key={service.id}
                 href="/services"
                 className="group flex flex-col rounded-2xl border border-slate-700 bg-slate-900/60 p-6 shadow-sm transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-xl"
               >

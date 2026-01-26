@@ -14,9 +14,9 @@ type BuildingApartment = {
   rooms: number;
   status: ApartmentStatus;
   priceLabel: string;
-  floorplanImage: string;
-  parkingSpotLabel: string;
-  parkingImageSrc: string;
+  floorplanImage?: string;
+  parkingSpotLabel?: string;
+  parkingImageSrc?: string;
 };
 
 type BuildingFloor = {
@@ -25,107 +25,13 @@ type BuildingFloor = {
   apartments: BuildingApartment[];
 };
 
-type BuildingData = {
+type ProjectDetailClientProps = {
+  slug: string;
   buildingName: string;
   floors: BuildingFloor[];
 };
 
-type ProjectDetailClientProps = {
-  slug: string;
-};
-
-const buildingData: BuildingData = {
-  buildingName: "Boggur Towers",
-  floors: [
-    {
-      floorNumber: 3,
-      label: "3rd floor",
-      apartments: [
-        {
-          id: "3A",
-          name: "Apartment 3A",
-          size: 78,
-          rooms: 3,
-          status: "available",
-          priceLabel: "From 59.900.000 kr",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "P3",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-        {
-          id: "3B",
-          name: "Apartment 3B",
-          size: 65,
-          rooms: 2,
-          status: "reserved",
-          priceLabel: "From 52.900.000 kr",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "P4",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-        {
-          id: "3C",
-          name: "Apartment 3C",
-          size: 92,
-          rooms: 4,
-          status: "sold",
-          priceLabel: "Sold out",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "P5",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-      ],
-    },
-    {
-      floorNumber: 2,
-      label: "2nd floor",
-      apartments: [
-        {
-          id: "2A",
-          name: "Apartment 2A",
-          size: 72,
-          rooms: 3,
-          status: "available",
-          priceLabel: "From 56.900.000 kr",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "P2",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-        {
-          id: "2B",
-          name: "Apartment 2B",
-          size: 60,
-          rooms: 2,
-          status: "available",
-          priceLabel: "From 48.900.000 kr",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "P1",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-      ],
-    },
-    {
-      floorNumber: 1,
-      label: "Ground floor",
-      apartments: [
-        {
-          id: "1A",
-          name: "Apartment 1A",
-          size: 55,
-          rooms: 2,
-          status: "available",
-          priceLabel: "From 44.900.000 kr",
-          floorplanImage: "/images/apartments/floorplan1.png",
-          parkingSpotLabel: "G1",
-          parkingImageSrc: "/images/apartments/parking1.png",
-        },
-      ],
-    },
-  ],
-};
-
-export default function ProjectDetailClient({ slug }: ProjectDetailClientProps) {
-  const floors = buildingData.floors;
+export default function ProjectDetailClient({ slug, buildingName, floors }: ProjectDetailClientProps) {
 
   const [selectedFloor, setSelectedFloor] = useState<number>(
     floors[0]?.floorNumber ?? 1
@@ -163,7 +69,7 @@ export default function ProjectDetailClient({ slug }: ProjectDetailClientProps) 
           Project Placeholder
         </p>
         <h1 className="text-2xl font-semibold text-slate-50 sm:text-3xl">
-          {buildingData.buildingName} — {slug}
+          {buildingName} — {slug}
         </h1>
         <p className="text-sm text-slate-300 sm:text-base">
           This is an interactive placeholder for the future apartment selector.
