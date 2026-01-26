@@ -56,28 +56,34 @@ const priorityServices = [
 
 const teamMembers = [
   {
-    name: "Owner 1",
-    role: "Founder / Owner",
-  },
-  {
-    name: "Owner 2",
-    role: "Founder / Owner",
-  },
-  {
-    name: "Owner 3",
+    name: "Fannar",
     role: "Owner",
+    imageSrc: "/images/team/fannar_reg.jpeg",
   },
   {
-    name: "Owner 4",
+    name: "Julius",
     role: "Owner",
+    imageSrc: "/images/team/julius_reg.jpeg",
   },
   {
-    name: "Owner 5",
+    name: "Numi",
     role: "Owner",
+    imageSrc: "/images/team/numi_reg.jpeg",
   },
   {
-    name: "Owner 6",
+    name: "Ragnar",
     role: "Owner",
+    imageSrc: "/images/team/ragnar_reg.jpeg",
+  },
+  {
+    name: "Haukur",
+    role: "Owner",
+    imageSrc: "/images/team/haukur_reg.jpeg",
+  },
+  {
+    name: "Orvar",
+    role: "Owner",
+    imageSrc: "/images/team/orvar_reg.jpeg",
   },
 ];
 
@@ -194,11 +200,7 @@ export default function HomePage() {
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {teamMembers.map((member) => (
-              <TeamCard
-                key={member.name}
-                name={member.name}
-                role={member.role}
-              />
+              <TeamCard key={member.name} {...member} />
             ))}
           </div>
         </div>

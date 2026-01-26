@@ -10,7 +10,7 @@ const slides = [
     title: "Projects that shape modern Reykjavik",
     subtitle:
       "Explore current and future residential and mixed-use developments in the Boggur pipeline.",
-    imageSrc: "/images/hero/slide-projects.svg",
+    imageSrc: "/images/hero/hopur1.jpg",
     primaryCta: { label: "View projects", href: "/projects" },
     secondaryCta: { label: "About Boggur", href: "/about" },
   },
@@ -19,7 +19,7 @@ const slides = [
     title: "Priority services for developers and buyers",
     subtitle:
       "From concept to completion, Boggur coordinates design, planning, and sales.",
-    imageSrc: "/images/hero/slide-services.svg",
+    imageSrc: "/images/hero/hopur2.jpg",
     primaryCta: { label: "View services", href: "/services" },
     secondaryCta: { label: "Contact us", href: "/contact" },
   },
@@ -28,18 +28,9 @@ const slides = [
     title: "Experienced team, focused on long-term value",
     subtitle:
       "Meet the owners behind Boggur and the projects they stand behind.",
-    imageSrc: "/images/hero/slide-team.svg",
+    imageSrc: "/images/hero/hopur3.jpg",
     primaryCta: { label: "Meet the team", href: "/team" },
     secondaryCta: { label: "Contact Boggur", href: "/contact" },
-  },
-  {
-    id: 4,
-    title: "Additional services tailored to each project",
-    subtitle:
-      "Bespoke advisory and support services around financing, sales, and project preparation.",
-    imageSrc: "/images/hero/slide-other-services.svg",
-    primaryCta: { label: "Other services", href: "/#other-services" },
-    secondaryCta: { label: "Contact us", href: "/contact" },
   },
 ];
 
@@ -58,7 +49,7 @@ export default function HeroSlider() {
 
   return (
     <section className="relative w-full bg-slate-950 text-white">
-      <div className="relative h-[22rem] w-full overflow-hidden sm:h-[26rem] lg:h-[32rem]">
+      <div className="relative h-[24rem] w-full overflow-hidden sm:h-[28rem] lg:h-[34rem]">
         {/* Image track */}
         <div
           className="flex h-full w-full transition-transform duration-700 ease-out"
@@ -70,7 +61,7 @@ export default function HeroSlider() {
                 src={slide.imageSrc}
                 alt={slide.title}
                 fill
-                className="object-cover"
+                className="object-cover object-[center_top]"
                 sizes="100vw"
                 priority={slide.id === 1}
               />
