@@ -7,8 +7,12 @@ import ApartmentsAdminSection from "./ApartmentsAdminSection";
 import ServicesAdminSection from "./ServicesAdminSection";
 import OtherServicesAdminSection from "./OtherServicesAdminSection";
 import TeamAdminSection from "./TeamAdminSection";
+import StreetsAdminSection from "./StreetsAdminSection";
+import BuildingsAdminSection from "./BuildingsAdminSection";
 
 type TabId =
+  | "streets"
+  | "buildings"
   | "projects"
   | "apartments"
   | "services"
@@ -16,6 +20,18 @@ type TabId =
   | "team";
 
 const TABS: { id: TabId; label: string; description: string }[] = [
+  {
+    id: "streets",
+    label: "Streets",
+    description:
+      "Manage streets and overview images used for the top-level selector.",
+  },
+  {
+    id: "buildings",
+    label: "Buildings",
+    description:
+      "Manage buildings per street, thumbnails, and 2D layout images.",
+  },
   {
     id: "projects",
     label: "Projects",
@@ -86,6 +102,22 @@ export default function AdminPage() {
       <p className="text-xs text-slate-500">{activeTab.description}</p>
 
       <div className="rounded-2xl border border-slate-200 bg-surface p-4 shadow-sm sm:p-5">
+        {active === "streets" && (
+          <>
+            <div className="mb-2 text-[10px] font-mono text-red-500">
+              DEBUG: streets tab active
+            </div>
+            <StreetsAdminSection />
+          </>
+        )}
+        {active === "buildings" && (
+          <>
+            <div className="mb-2 text-[10px] font-mono text-red-500">
+              DEBUG: buildings tab active
+            </div>
+            <BuildingsAdminSection />
+          </>
+        )}
         {active === "projects" && <ProjectsAdminSection />}
         {active === "apartments" && <ApartmentsAdminSection />}
         {active === "services" && <ServicesAdminSection />}
@@ -93,4 +125,5 @@ export default function AdminPage() {
         {active === "team" && <TeamAdminSection />}
       </div>
     </section>
-  );}
+  );
+}

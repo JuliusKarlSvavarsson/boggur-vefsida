@@ -1,16 +1,27 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import type { Project } from "./ProjectsAdminSection";
+
+type Building = {
+  id: string;
+  title: string;
+  street_id: string;
+};
 
 export type Apartment = {
   id: string;
-  project_id: string;
+  project_id: string | null;
+  building_id: string | null;
   floor: number;
   number: string;
   status: string;
   size: number | null;
   rooms: number | null;
   layout_image: string | null;
+  interior_images: string[] | null;
   parking_spot: string | null;
+  x_position: number | null;
+  y_position: number | null;
+  width: number | null;
+  height: number | null;
   created_at: string;
 };
 
@@ -73,12 +84,11 @@ function ImagePreview({ url, recommended }: { url: string; recommended?: string 
 
 export default function ApartmentsAdminSection() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [buildings, setBuildings] = useState<Building[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [projectFilter, setProjectFilter] = useState<string>("all");
   const [page, setPage] = useState(0);
   const pageSize = 15;
 
@@ -87,7 +97,7 @@ export default function ApartmentsAdminSection() {
   const [formError, setFormError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
-    project_id: "",
+    building_id: "",
     floor: "",
     number: "",
     status: "available",
@@ -95,23 +105,28 @@ export default function ApartmentsAdminSection() {
     rooms: "",
     layout_image: "",
     parking_spot: "",
+    x_position: "",
+    y_position: "",
+    width: "",
+    height: "",
+    interior_images: "",
   });
 
   async function load() {
     setLoading(true);
     setError(null);
     try {
-      const [apartmentsRes, projectsRes] = await Promise.all([
+      const [apartmentsRes, buildingsRes] = await Promise.all([
         fetch("/api/admin/apartments", { cache: "no-store" }),
-        fetch("/api/admin/projects", { cache: "no-store" }),
+        fetch("/api/admin/buildings", { cache: "no-store" }),
       ]);
-      if (!apartmentsRes.ok || !projectsRes.ok) {
-        throw new Error("Failed to load apartments or projects");
+      if (!apartmentsRes.ok || !buildingsRes.ok) {
+        throw new Error("Failed to load apartments or buildings");
       }
       const apartmentsData: Apartment[] = await apartmentsRes.json();
-      const projectsData: Project[] = await projectsRes.json();
+      const buildingsData: Building[] = await buildingsRes.json();
       setApartments(apartmentsData);
-      setProjects(projectsData);
+      setBuildings(buildingsData);
     } catch (e) {
       setError((e as Error).message ?? "Failed to load apartments");
     } finally {
@@ -126,7 +141,7 @@ export default function ApartmentsAdminSection() {
   function resetForm() {
     setEditing(null);
     setForm({
-      project_id: "",
+      building_id: "",
       floor: "",
       number: "",
       status: "available",
@@ -134,6 +149,11 @@ export default function ApartmentsAdminSection() {
       rooms: "",
       layout_image: "",
       parking_spot: "",
+      x_position: "",
+      y_position: "",
+      width: "",
+      height: "",
+      interior_images: "",
     });
     setFormError(null);
   }
@@ -141,7 +161,7 @@ export default function ApartmentsAdminSection() {
   function startEdit(apartment: Apartment) {
     setEditing(apartment);
     setForm({
-      project_id: apartment.project_id,
+      building_id: apartment.building_id ?? "",
       floor: String(apartment.floor ?? ""),
       number: apartment.number,
       status: apartment.status,
@@ -155,35 +175,52 @@ export default function ApartmentsAdminSection() {
           : "",
       layout_image: apartment.layout_image ?? "",
       parking_spot: apartment.parking_spot ?? "",
+      x_position:
+        apartment.x_position != null && !Number.isNaN(Number(apartment.x_position))
+          ? String(apartment.x_position)
+          : "",
+      y_position:
+        apartment.y_position != null && !Number.isNaN(Number(apartment.y_position))
+          ? String(apartment.y_position)
+          : "",
+      width:
+        apartment.width != null && !Number.isNaN(Number(apartment.width))
+          ? String(apartment.width)
+          : "",
+      height:
+        apartment.height != null && !Number.isNaN(Number(apartment.height))
+          ? String(apartment.height)
+          : "",
+      interior_images: apartment.interior_images
+        ? apartment.interior_images.join("\n")
+        : "",
     });
     setFormError(null);
   }
 
-  const projectMap = useMemo(() => {
-    const map = new Map<string, Project>();
-    for (const p of projects) map.set(p.id, p);
+  const buildingMap = useMemo(() => {
+    const map = new Map<string, Building>();
+    for (const b of buildings) map.set(b.id, b);
     return map;
-  }, [projects]);
+  }, [buildings]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     return apartments.filter((a) => {
       if (statusFilter !== "all" && a.status !== statusFilter) return false;
-      if (projectFilter !== "all" && a.project_id !== projectFilter) return false;
       if (!term) return true;
-      const project = projectMap.get(a.project_id);
+      const building = a.building_id ? buildingMap.get(a.building_id) : undefined;
       return [
         a.number,
         String(a.floor),
-        project?.title ?? "",
-        project?.location ?? "",
+        building?.title ?? "",
         a.status,
       ]
         .join(" ")
         .toLowerCase()
         .includes(term);
     });
-  }, [apartments, statusFilter, projectFilter, search, projectMap]);
+  }, [apartments, statusFilter, search, buildingMap]);
 
   const paged = useMemo(() => {
     const start = page * pageSize;
@@ -192,16 +229,11 @@ export default function ApartmentsAdminSection() {
 
   useEffect(() => {
     setPage(0);
-  }, [search, statusFilter, projectFilter]);
+  }, [search, statusFilter]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFormError(null);
-
-    if (!form.project_id) {
-      setFormError("Project is required.");
-      return;
-    }
 
     const floor = Number(form.floor);
     if (!Number.isFinite(floor)) {
@@ -232,10 +264,16 @@ export default function ApartmentsAdminSection() {
       return;
     }
 
+    const interiorImages = form.interior_images
+      .split(/\r?\n|,/)
+      .map((url) => url.trim())
+      .filter((url) => url.length > 0);
+
     setSaving(true);
     try {
       const payload = {
-        project_id: form.project_id,
+        project_id: null,
+        building_id: form.building_id || null,
         floor,
         number,
         status,
@@ -243,6 +281,11 @@ export default function ApartmentsAdminSection() {
         rooms,
         layout_image: form.layout_image.trim() || null,
         parking_spot: form.parking_spot.trim() || null,
+        x_position: form.x_position.trim() || null,
+        y_position: form.y_position.trim() || null,
+        width: form.width.trim() || null,
+        height: form.height.trim() || null,
+        interior_images: interiorImages,
       };
 
       const isEdit = Boolean(editing);
@@ -318,7 +361,7 @@ export default function ApartmentsAdminSection() {
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-slate-900">Apartments</h2>
           <p className="text-xs text-slate-600">
-            Manage apartments per project. Status drives the colors and labels
+            Manage apartments per building. Status drives the colors and labels
             on the public site.
           </p>
         </div>
@@ -341,18 +384,6 @@ export default function ApartmentsAdminSection() {
               <option value="reserved">Reserved</option>
               <option value="sold">Sold</option>
             </select>
-            <select
-              value={projectFilter}
-              onChange={(e) => setProjectFilter(e.target.value)}
-              className="h-9 max-w-[180px] rounded-full border border-slate-200 bg-white px-3 text-[11px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">All projects</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </div>
@@ -362,7 +393,7 @@ export default function ApartmentsAdminSection() {
           <table className="min-w-full text-left text-xs">
             <thead className="bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-3 py-2 font-semibold">Project</th>
+                <th className="px-3 py-2 font-semibold">Building</th>
                 <th className="px-3 py-2 font-semibold">Number</th>
                 <th className="px-3 py-2 font-semibold">Floor</th>
                 <th className="px-3 py-2 font-semibold">Rooms</th>
@@ -395,7 +426,9 @@ export default function ApartmentsAdminSection() {
                 </tr>
               )}
               {paged.map((apt) => {
-                const project = projectMap.get(apt.project_id);
+                const building = apt.building_id
+                  ? buildingMap.get(apt.building_id)
+                  : undefined;
                 const statusClass =
                   apt.status === "available"
                     ? "bg-emerald-50 text-emerald-700 ring-emerald-100"
@@ -404,15 +437,8 @@ export default function ApartmentsAdminSection() {
                     : "bg-amber-50 text-amber-700 ring-amber-100";
                 return (
                   <tr key={apt.id} className="align-top">
-                    <td className="px-3 py-3 text-xs text-slate-900">
-                      <div className="font-medium">
-                        {project?.title ?? "Unknown project"}
-                      </div>
-                      {project?.location && (
-                        <div className="text-[11px] text-slate-500">
-                          {project.location}
-                        </div>
-                      )}
+                    <td className="px-3 py-3 text-xs text-slate-700">
+                      {building?.title ?? "-"}
                     </td>
                     <td className="px-3 py-3 text-xs text-slate-700">
                       {apt.number}
@@ -481,8 +507,8 @@ export default function ApartmentsAdminSection() {
           {editing ? "Edit apartment" : "Add new apartment"}
         </h3>
         <p className="mb-4 text-xs text-slate-600">
-          Apartments are grouped by project and floor on the public site. Use a
-          consistent apartment number format (e.g. 301, 3A).
+          Apartments are tied to buildings. For the building overlays you
+          mainly need the apartment number, floor and status.
         </p>
         {formError && (
           <p className="mb-3 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
@@ -495,20 +521,19 @@ export default function ApartmentsAdminSection() {
         >
           <div className="space-y-1 md:col-span-1">
             <label className="block text-xs font-medium text-slate-800">
-              Project*
+              Building
             </label>
             <select
-              value={form.project_id}
+              value={form.building_id}
               onChange={(e) =>
-                setForm((f) => ({ ...f, project_id: e.target.value }))
+                setForm((f) => ({ ...f, building_id: e.target.value }))
               }
-              required
               className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">Select project</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
+              <option value="">No building (project-only)</option>
+              {buildings.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.title}
                 </option>
               ))}
             </select>
