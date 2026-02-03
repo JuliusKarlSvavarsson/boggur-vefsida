@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSql } from "@/app/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const sql = getSql();
 

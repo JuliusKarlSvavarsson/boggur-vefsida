@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 const primaryWorkshopImage = {
   src: "/images/blikksmidi/Blikkvel1.jpg",
   alt: "Blikksmíðavél með skurðar- og beygjubúnaði",
