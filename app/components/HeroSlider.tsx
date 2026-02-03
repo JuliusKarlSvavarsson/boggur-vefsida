@@ -11,16 +11,16 @@ const slides = [
     subtitle:
       "Skoðaðu íbúðir sem við erum að byggja og selja.",
     imageSrc: "/images/hero/hero-projects.jpg",
-    primaryCta: { label: "Skoða íbúðir", href: "/projects" },
-    secondaryCta: { label: "Um Bögg", href: "/about" },
+    primaryCta: { label: "Skoða íbúðir", href: "/building" },
+    secondaryCta: { label: "Um Bögg", href: "/um-boggur" },
   },
   {
     id: 2,
     title: "Fagmennska og gæði",
     subtitle: "Við tökum að okkur öll byggingarverkefni, stór sem smá, með fagmennsku, öryggi og skýru verklagi frá fyrsta degi.",
     imageSrc: "/images/hero/hopur tough.png",
-    primaryCta: { label: "Hafa samband", href: "/contact" },
-    secondaryCta: { label: "Kynntu teymið", href: "/team" },
+    primaryCta: { label: "Hafa samband", href: "/hafa-samband" },
+    secondaryCta: { label: "Kynntu teymið", href: "/um-boggur" },
   },
   /*{
     id: 3,

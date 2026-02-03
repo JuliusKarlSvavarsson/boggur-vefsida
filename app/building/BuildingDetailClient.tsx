@@ -101,7 +101,7 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
         setLoading(true);
         const [buildingsRes, streetsRes] = await Promise.all([
           fetch("/api/buildings", { cache: "no-store" }),
-          fetch("/api/admin/streets", { cache: "no-store" }),
+          fetch("/api/streets", { cache: "no-store" }),
         ]);
         if (!buildingsRes.ok || !streetsRes.ok) {
           throw new Error("Failed to load building or street data");
@@ -210,15 +210,16 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
         setDetailError(null);
 
         const res = await fetch(
-          `/api/admin/apartments?building_id=${encodeURIComponent(
-            currentBuildingId,
-          )}`,
+          `/api/buildings/${encodeURIComponent(currentBuildingId)}`,
           { cache: "no-store" },
         );
         if (!res.ok) throw new Error("Failed to load apartments for building");
-        const apartmentsData = (await res.json()) as Apartment[];
+        const data = (await res.json()) as {
+          building: Building;
+          apartments: Apartment[];
+        };
 
-        setDetail({ building: currentBuilding, apartments: apartmentsData });
+        setDetail({ building: currentBuilding, apartments: data.apartments });
         setSelectedApartmentId(null);
         setHoveredApartmentId(null);
       } catch (e) {

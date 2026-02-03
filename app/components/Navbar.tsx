@@ -19,7 +19,8 @@ export default function Navbar({ variant = "onLight" }: NavbarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
   const desktopLinkClasses = (href: string) => {
     const active = isActive(href);
