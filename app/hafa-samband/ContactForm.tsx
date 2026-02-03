@@ -18,6 +18,8 @@ export function ContactForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   function validate() {
     const nextErrors: Record<string, string> = {};
@@ -47,15 +49,49 @@ export function ContactForm() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setSubmitted(false);
+    setSubmitError(null);
 
     const nextErrors = validate();
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    // Placeholder: here you could POST to an API route.
-    setSubmitted(true);
-    // Optionally clear the message but keep contact details.
-    setForm((prev) => ({ ...prev, subject: "", message: "" }));
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message,
+          inquiryType: form.inquiryType,
+        }),
+      });
+
+      if (!response.ok) {
+        let errorMessage = "Tókst ekki að senda skilaboð.";
+        try {
+          const data = (await response.json()) as { error?: string };
+          if (data?.error) errorMessage = data.error;
+        } catch {
+          // ignore JSON parse errors and use default message
+        }
+        setSubmitError(errorMessage);
+        return;
+      }
+
+      setSubmitted(true);
+      // Optionally clear the message but keep contact details.
+      setForm((prev) => ({ ...prev, subject: "", message: "" }));
+    } catch {
+      setSubmitError("Tókst ekki að senda skilaboð. Vinsamlegast reynið aftur síðar.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -72,6 +108,12 @@ export function ContactForm() {
       {submitted && (
         <p className="mb-4 rounded-md border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
           Skilaboð send. Við höfum samband fljótlega.
+        </p>
+      )}
+
+      {submitError && (
+        <p className="mb-4 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {submitError}
         </p>
       )}
 
@@ -185,9 +227,10 @@ export function ContactForm() {
         <div className="pt-1">
           <button
             type="submit"
+            disabled={isSubmitting}
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-slate-900 shadow-sm transition-colors duration-200 ease-out hover:border-slate-400 hover:bg-slate-100"
           >
-            Senda skilaboð
+            {isSubmitting ? "Sendi..." : "Senda skilaboð"}
           </button>
         </div>
       </form>
