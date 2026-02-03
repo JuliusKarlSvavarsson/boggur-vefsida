@@ -10,6 +10,11 @@ export async function PUT(
 
   const name = (body.name ?? "").trim();
   const image = body.image ?? null;
+  const isFeatured = Boolean(body.is_featured);
+  const featuredOrder =
+    body.featured_order != null && body.featured_order !== ""
+      ? Number(body.featured_order)
+      : 0;
 
   if (!name) {
     return NextResponse.json(
@@ -20,9 +25,9 @@ export async function PUT(
 
   const [street] = await sql`
     UPDATE streets
-    SET name = ${name}, image = ${image}
+    SET name = ${name}, image = ${image}, is_featured = ${isFeatured}, featured_order = ${featuredOrder}
     WHERE id = ${params.id}
-    RETURNING id, name, image, created_at
+    RETURNING id, name, image, is_featured, featured_order, created_at
   `;
 
   if (!street) {

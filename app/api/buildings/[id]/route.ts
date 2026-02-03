@@ -8,7 +8,7 @@ export async function GET(
   const sql = getSql();
 
   const [building] = await sql`
-    SELECT id, title, slug, street_id, description, thumbnail, layout_image, status, created_at
+    SELECT id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
     FROM buildings
     WHERE id = ${params.id}
   `;

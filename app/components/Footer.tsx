@@ -1,20 +1,110 @@
+import Link from "next/link";
+import { contactConfig } from "@/app/contactConfig";
+
 export default function Footer() {
+  const { phone, email, addressLines } = contactConfig;
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="mt-16 bg-slate-950 text-slate-300">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8 lg:text-sm">
-        <div className="space-y-1">
-          <span className="block font-medium">Boggur</span>
-          <span className="block text-slate-400">
-            © {new Date().getFullYear()} Boggur. All rights reserved.
-          </span>
+    <footer className="mt-16 bg-slate-950 text-slate-200">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 text-sm md:grid-cols-3">
+          {/* Company */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              BÖGGUR
+            </p>
+            <p className="text-sm text-slate-200">Byggingar og fasteignaþróun</p>
+            <p className="text-xs text-slate-500">
+              © {year} Böggur. Öll réttindi áskilin.
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              LEIÐSÖGN
+            </p>
+            <nav className="space-y-1">
+              <Link
+                href="/building"
+                className="block text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                Íbúðir
+              </Link>
+              <Link
+                href="/services"
+                className="block text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                Þjónusta
+              </Link>
+              <Link
+                href="/onnur-thjonusta"
+                className="block text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                Önnur þjónusta
+              </Link>
+              <Link
+                href="/um-boggur"
+                className="block text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                Um Bögg
+              </Link>
+              <Link
+                href="/hafa-samband"
+                className="block text-sm text-slate-300 underline-offset-4 hover:text-white hover:underline"
+              >
+                Hafa samband
+              </Link>
+            </nav>
+          </div>
+
+          {/* Contact info */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              UPPLÝSINGAR
+            </p>
+            <div className="space-y-1 text-sm">
+              <div>
+                <p className="text-xs text-slate-400">Sími</p>
+                <p>
+                  <a
+                    href={`tel:${phone}`}
+                    className="text-slate-300 underline-offset-4 hover:text-white hover:underline"
+                  >
+                    {phone}
+                  </a>
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">Netfang</p>
+                <p>
+                  <a
+                    href={`mailto:${email}`}
+                    className="text-slate-300 underline-offset-4 hover:text-white hover:underline"
+                  >
+                    {email}
+                  </a>
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">Heimilisfang</p>
+                <p className="text-slate-300">
+                  {addressLines?.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-1 text-slate-400 sm:items-end">
-          <span className="text-xs sm:text-sm">
-            Placeholder contact info — email and social links will be added later.
-          </span>
-          <span className="text-xs text-slate-500">
-            Boggur 2.0 — built with Next.js 14 &amp; Tailwind CSS.
-          </span>
+
+        <div className="mx-auto max-w-6xl px-4 pb-6 pt-4 sm:px-6 lg:px-8">
+          <p className="text-center text-[11px] text-slate-500 md:text-right">
+            Hönnun og þróun: Julius Karl Svavarsson
+          </p>
         </div>
       </div>
     </footer>

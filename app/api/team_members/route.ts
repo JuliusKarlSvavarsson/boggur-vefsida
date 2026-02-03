@@ -5,9 +5,9 @@ export async function GET() {
   const sql = getSql();
 
   const teamMembers = await sql`
-    SELECT id, name, role, image, created_at
+    SELECT id, name, role, image, phone, email, sort_order, created_at
     FROM team_members
-    ORDER BY created_at ASC
+    ORDER BY sort_order IS NULL, sort_order ASC, created_at ASC
   `;
 
   return NextResponse.json(teamMembers);

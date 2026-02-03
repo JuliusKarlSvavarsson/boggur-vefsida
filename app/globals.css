@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --header-height: 6rem;
+  --map-accent: #f59e0b;
+  --map-accent-rgb: 245, 158, 11;
+}
+
 body {
   @apply bg-zinc-50 text-slate-900 antialiased font-sans;
 }

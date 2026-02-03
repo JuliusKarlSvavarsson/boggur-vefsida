@@ -200,10 +200,11 @@ export default function OtherServicesAdminSection() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold text-slate-900">Other Services</h2>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Önnur þjónusta – Vörur í sölu
+          </h2>
           <p className="text-xs text-slate-600">
-            These appear in the "Önnur þjónusta" section on the home page and
-            on the /other-services page.
+            Vörur sem birtast í kaflanum „Vörur í sölu" á síðunni /onnur-thjonusta.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -211,7 +212,7 @@ export default function OtherServicesAdminSection() {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search other services..."
+            placeholder="Leita í vörum..."
             className="h-9 w-full rounded-full border border-slate-200 px-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary sm:w-64"
           />
           <button
@@ -219,7 +220,7 @@ export default function OtherServicesAdminSection() {
             onClick={resetForm}
             className="h-9 rounded-full border border-slate-200 bg-white px-4 text-xs font-medium text-slate-800 shadow-sm hover:bg-slate-50"
           >
-            Add new other service
+            Bæta við vöru
           </button>
         </div>
       </div>
@@ -304,11 +305,11 @@ export default function OtherServicesAdminSection() {
 
       <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 shadow-inner">
         <h3 className="mb-2 text-sm font-semibold text-slate-900">
-          {editing ? "Edit other service" : "Add new other service"}
+          {editing ? "Uppfæra vöru" : "Bæta við vöru"}
         </h3>
         <p className="mb-4 text-xs text-slate-600">
-          Other services also use card-style images; they will be safely
-          cropped, so wide landscape works best.
+          Vörur í sölu nota litla mynd með föstum hæðarmæli; róleg lárétt mynd
+          virkar best.
         </p>
         {formError && (
           <p className="mb-3 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
@@ -348,16 +349,16 @@ export default function OtherServicesAdminSection() {
           </div>
           <div className="space-y-1 md:col-span-2">
             <label className="block text-xs font-medium text-slate-800">
-              Image URL
+              Image path
               <span className="ml-1 text-[10px] text-slate-500">
-                (recommended ~800×600)
+                (t.d. /images/thjonusta/mynd.jpg)
               </span>
             </label>
             <input
-              type="url"
+              type="text"
               value={form.image}
               onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-              placeholder="/images/services/xyz.jpg or https://..."
+              placeholder="/images/thjonusta/mynd.jpg eða https://..."
               className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <ImagePreview
@@ -374,10 +375,10 @@ export default function OtherServicesAdminSection() {
               {saving
                 ? editing
                   ? "Saving changes..."
-                  : "Creating other service..."
+                  : "Creating product..."
                 : editing
                   ? "Save changes"
-                  : "Create other service"}
+                  : "Create product"}
             </button>
             {editing && (
               <button

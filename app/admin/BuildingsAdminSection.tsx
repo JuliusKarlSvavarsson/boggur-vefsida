@@ -11,11 +11,13 @@ type Building = {
   id: string;
   title: string;
   slug: string;
-  street_id: string;
+  street_id: string | null;
   description: string | null;
   thumbnail: string | null;
   layout_image: string | null;
   status: string | null;
+  is_featured: boolean;
+  display_order: number | null;
   created_at: string;
 };
 
@@ -98,6 +100,8 @@ export default function BuildingsAdminSection() {
     thumbnail: "",
     layout_image: "",
     status: "",
+    is_featured: false,
+    display_order: "" as string | number,
   });
 
   async function load() {
@@ -158,6 +162,8 @@ export default function BuildingsAdminSection() {
       thumbnail: "",
       layout_image: "",
       status: "",
+      is_featured: false,
+      display_order: "",
     });
     setFormError(null);
   }
@@ -167,11 +173,16 @@ export default function BuildingsAdminSection() {
     setForm({
       title: building.title,
       slug: building.slug,
-      street_id: building.street_id,
+      street_id: building.street_id ?? "",
       description: building.description ?? "",
       thumbnail: building.thumbnail ?? "",
       layout_image: building.layout_image ?? "",
       status: building.status ?? "",
+      is_featured: building.is_featured ?? false,
+      display_order:
+        building.display_order != null && !Number.isNaN(building.display_order)
+          ? String(building.display_order)
+          : "",
     });
     setFormError(null);
   }
@@ -182,21 +193,36 @@ export default function BuildingsAdminSection() {
 
     const title = form.title.trim();
     const slug = form.slug.trim();
-    if (!title || !slug || !form.street_id) {
-      setFormError("Title, slug, and street are required.");
+    if (!title || !slug) {
+      setFormError("Title and slug are required.");
       return;
     }
 
     setSaving(true);
     try {
+      const rawOrder =
+        typeof form.display_order === "string"
+          ? form.display_order.trim()
+          : String(form.display_order);
+      const displayOrderTmp =
+        rawOrder !== "" && !Number.isNaN(Number(rawOrder))
+          ? Number(rawOrder)
+          : null;
+      const display_order =
+        displayOrderTmp !== null && Number.isFinite(displayOrderTmp)
+          ? displayOrderTmp
+          : null;
+
       const payload = {
         title,
         slug,
-        street_id: form.street_id,
+        street_id: form.street_id || null,
         description: form.description.trim() || null,
         thumbnail: form.thumbnail.trim() || null,
         layout_image: form.layout_image.trim() || null,
         status: form.status.trim() || null,
+        is_featured: Boolean(form.is_featured),
+        display_order,
       };
 
       const isEdit = Boolean(editing);
@@ -416,17 +442,16 @@ export default function BuildingsAdminSection() {
           </div>
           <div className="space-y-1">
             <label className="block text-xs font-medium text-slate-800">
-              Street*
+              Street (optional)
             </label>
             <select
               value={form.street_id}
               onChange={(e) =>
                 setForm((f) => ({ ...f, street_id: e.target.value }))
               }
-              required
               className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="">Select street</option>
+              <option value="">No street / none</option>
               {streets.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -445,6 +470,38 @@ export default function BuildingsAdminSection() {
               maxLength={80}
               className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Aðalverkefni
+            </label>
+            <label className="inline-flex items-center gap-2 text-xs text-slate-700">
+              <input
+                type="checkbox"
+                checked={Boolean(form.is_featured)}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, is_featured: e.target.checked }))
+                }
+                className="h-3.5 w-3.5 rounded border-slate-300 text-primary focus:ring-primary"
+              />
+              <span>Birtist sem stærsta kortið á yfirlitssíðu.</span>
+            </label>
+          </div>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Röð
+            </label>
+            <input
+              type="number"
+              value={form.display_order}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, display_order: e.target.value }))
+              }
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <p className="text-[10px] text-slate-500">
+              Lægri tala = birtist ofar.
+            </p>
           </div>
           <div className="space-y-1 md:col-span-2">
             <label className="block text-xs font-medium text-slate-800">

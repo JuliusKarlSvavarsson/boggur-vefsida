@@ -220,7 +220,7 @@ export default function BuildingExplorer({
                       </div>
                       {building.status && (
                         <div className="text-[11px] text-slate-200">
-                          {building.status}
+                          {statusLabel(building.status)}
                         </div>
                       )}
                     </div>
@@ -251,7 +251,7 @@ export default function BuildingExplorer({
             </div>
             {selectedBuilding?.status && (
               <span className="rounded-full bg-slate-900 px-3 py-1 text-[11px] font-medium text-slate-50">
-                {selectedBuilding.status}
+                {statusLabel(selectedBuilding.status)}
               </span>
             )}
           </div>

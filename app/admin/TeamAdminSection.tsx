@@ -5,6 +5,9 @@ export type TeamMember = {
   name: string;
   role: string;
   image: string | null;
+  phone: string | null;
+  email: string | null;
+  sort_order: number | null;
   created_at: string;
 };
 
@@ -81,6 +84,9 @@ export default function TeamAdminSection() {
     name: "",
     role: "",
     image: "",
+    phone: "",
+    email: "",
+    sortOrder: "",
   });
 
   async function load() {
@@ -106,7 +112,7 @@ export default function TeamAdminSection() {
     const term = search.trim().toLowerCase();
     if (!term) return items;
     return items.filter((m) =>
-      [m.name, m.role]
+      [m.name, m.role, m.phone, m.email]
         .join(" ")
         .toLowerCase()
         .includes(term),
@@ -124,7 +130,7 @@ export default function TeamAdminSection() {
 
   function resetForm() {
     setEditing(null);
-    setForm({ name: "", role: "", image: "" });
+    setForm({ name: "", role: "", image: "", phone: "", email: "", sortOrder: "" });
     setFormError(null);
   }
 
@@ -134,6 +140,12 @@ export default function TeamAdminSection() {
       name: member.name,
       role: member.role,
       image: member.image ?? "",
+      phone: member.phone ?? "",
+      email: member.email ?? "",
+      sortOrder:
+        member.sort_order != null && !Number.isNaN(member.sort_order)
+          ? String(member.sort_order)
+          : "",
     });
     setFormError(null);
   }
@@ -149,12 +161,28 @@ export default function TeamAdminSection() {
       return;
     }
 
+    const phone = form.phone.trim();
+    const email = form.email.trim();
+    const sortOrderRaw = form.sortOrder.trim();
+    let sort_order: number | null = null;
+    if (sortOrderRaw) {
+      const parsed = Number(sortOrderRaw);
+      if (!Number.isFinite(parsed)) {
+        setFormError("Order must be a number.");
+        return;
+      }
+      sort_order = parsed;
+    }
+
     setSaving(true);
     try {
       const payload = {
         name,
         role,
         image: form.image.trim() || null,
+        phone: phone || null,
+        email: email || null,
+        sort_order,
       };
 
       const isEdit = Boolean(editing);
@@ -239,6 +267,8 @@ export default function TeamAdminSection() {
               <tr>
                 <th className="px-3 py-2 font-semibold">Name</th>
                 <th className="px-3 py-2 font-semibold">Role</th>
+                <th className="px-3 py-2 font-semibold">Phone</th>
+                <th className="px-3 py-2 font-semibold">Email</th>
                 <th className="px-3 py-2 font-semibold">Image</th>
                 <th className="px-3 py-2 font-semibold text-right">Actions</th>
               </tr>
@@ -247,7 +277,7 @@ export default function TeamAdminSection() {
               {loading && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={6}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     Loading team members...
@@ -257,7 +287,7 @@ export default function TeamAdminSection() {
               {!loading && filtered.length === 0 && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={6}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     No team members found.
@@ -271,6 +301,12 @@ export default function TeamAdminSection() {
                   </td>
                   <td className="px-3 py-3 text-[11px] text-slate-600">
                     {member.role}
+                  </td>
+                  <td className="px-3 py-3 text-[11px] text-slate-600">
+                    {member.phone ?? ""}
+                  </td>
+                  <td className="px-3 py-3 text-[11px] text-slate-600">
+                    {member.email ?? ""}
                   </td>
                   <td className="px-3 py-3 text-[11px] text-slate-600">
                     {member.image ? "Custom" : "Default / none"}
@@ -391,6 +427,32 @@ export default function TeamAdminSection() {
               className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Phone
+            </label>
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+              maxLength={32}
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="e.g. +354 ..."
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Email
+            </label>
+            <input
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              maxLength={160}
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="name@example.is"
+            />
+          </div>
           <div className="space-y-1 md:col-span-2">
             <label className="block text-xs font-medium text-slate-800">
               Image URL
@@ -399,7 +461,7 @@ export default function TeamAdminSection() {
               </span>
             </label>
             <input
-              type="url"
+              type="text"
               value={form.image}
               onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
               placeholder="/images/team/name.jpg or https://..."
@@ -409,6 +471,24 @@ export default function TeamAdminSection() {
               url={form.image}
               recommended="Preview is cropped to a circle on the public site."
             />
+          </div>
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Order
+              <span className="ml-1 text-[10px] text-slate-500">
+                (optional)
+              </span>
+            </label>
+            <input
+              type="number"
+              value={form.sortOrder}
+              onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="1, 2, 3..."
+            />
+            <p className="text-[10px] text-slate-500">
+              Lower numbers appear first. Leave empty to use created date.
+            </p>
           </div>
           <div className="mt-2 flex items-center gap-3 md:col-span-2">
             <button

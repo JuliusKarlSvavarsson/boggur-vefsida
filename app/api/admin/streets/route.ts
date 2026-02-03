@@ -5,7 +5,7 @@ export async function GET() {
   const sql = getSql();
 
   const streets = await sql`
-    SELECT id, name, image, created_at
+    SELECT id, name, image, is_featured, featured_order, created_at
     FROM streets
     ORDER BY created_at ASC
   `;
@@ -19,6 +19,11 @@ export async function POST(request: Request) {
 
   const name = (body.name ?? "").trim();
   const image = body.image ?? null;
+  const isFeatured = Boolean(body.is_featured);
+  const featuredOrder =
+    body.featured_order != null && body.featured_order !== ""
+      ? Number(body.featured_order)
+      : 0;
 
   if (!name) {
     return NextResponse.json(
@@ -28,9 +33,9 @@ export async function POST(request: Request) {
   }
 
   const [street] = await sql`
-    INSERT INTO streets (name, image)
-    VALUES (${name}, ${image})
-    RETURNING id, name, image, created_at
+    INSERT INTO streets (name, image, is_featured, featured_order)
+    VALUES (${name}, ${image}, ${isFeatured}, ${featuredOrder})
+    RETURNING id, name, image, is_featured, featured_order, created_at
   `;
 
   return NextResponse.json(street, { status: 201 });

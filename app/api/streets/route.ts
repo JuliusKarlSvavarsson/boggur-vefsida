@@ -5,7 +5,7 @@ export async function GET() {
   const sql = getSql();
 
   const streets = await sql`
-    SELECT id, name, image, created_at
+    SELECT id, name, image, is_featured, featured_order, created_at
     FROM streets
     ORDER BY created_at ASC
   `;

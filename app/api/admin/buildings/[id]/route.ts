@@ -10,24 +10,43 @@ export async function PUT(
 
   const title = (body.title ?? "").trim();
   const slug = (body.slug ?? "").trim();
-  const streetId = body.street_id as string | undefined;
+  const streetId = body.street_id ?? null;
   const description = body.description ?? null;
   const thumbnail = body.thumbnail ?? null;
   const layoutImage = body.layout_image ?? null;
   const status = body.status ?? null;
+  const isFeatured = Boolean(body.is_featured);
+  const rawDisplayOrder = body.display_order;
+  const displayOrderTmp =
+    rawDisplayOrder !== undefined && rawDisplayOrder !== null && rawDisplayOrder !== ""
+      ? Number(rawDisplayOrder)
+      : null;
+  const displayOrder =
+    displayOrderTmp !== null && Number.isFinite(displayOrderTmp)
+      ? displayOrderTmp
+      : null;
 
-  if (!title || !slug || !streetId) {
+  if (!title || !slug) {
     return NextResponse.json(
-      { error: "Title, slug, and street are required." },
+      { error: "Title and slug are required." },
       { status: 400 },
     );
   }
 
   const [building] = await sql`
     UPDATE buildings
-    SET title = ${title}, slug = ${slug}, street_id = ${streetId}, description = ${description}, thumbnail = ${thumbnail}, layout_image = ${layoutImage}, status = ${status}
+    SET
+      title = ${title},
+      slug = ${slug},
+      street_id = ${streetId},
+      description = ${description},
+      thumbnail = ${thumbnail},
+      layout_image = ${layoutImage},
+      status = ${status},
+      is_featured = ${isFeatured},
+      display_order = ${displayOrder}
     WHERE id = ${params.id}
-    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, status, created_at
+    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
   `;
 
   if (!building) {

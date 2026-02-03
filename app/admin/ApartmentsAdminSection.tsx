@@ -25,6 +25,13 @@ export type Apartment = {
   created_at: string;
 };
 
+function adminStatusLabel(status: string) {
+  if (status === "available") return "For sale";
+  if (status === "reserved") return "Taken";
+  if (status === "sold") return "Sold";
+  return status;
+}
+
 function Pagination({
   page,
   pageSize,
@@ -373,15 +380,15 @@ export default function ApartmentsAdminSection() {
             placeholder="Search by number, floor, project, status..."
             className="h-9 w-full rounded-full border border-slate-200 px-3 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary sm:w-64"
           />
-          <div className="flex gap-2 text-[11px]">
+          <div className="flex flex-wrap gap-2 text-[11px]">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="h-9 rounded-full border border-slate-200 bg-white px-3 text-[11px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="all">All statuses</option>
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
+              <option value="available">For sale</option>
+              <option value="reserved">Taken</option>
               <option value="sold">Sold</option>
             </select>
           </div>
@@ -459,7 +466,7 @@ export default function ApartmentsAdminSection() {
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ${statusClass}`}
                         title="Click to toggle between available and sold"
                       >
-                        {apt.status}
+                        {adminStatusLabel(apt.status)}
                       </button>
                     </td>
                     <td className="px-3 py-3 text-[11px] text-slate-600">
@@ -600,8 +607,8 @@ export default function ApartmentsAdminSection() {
               required
               className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="available">Available</option>
-              <option value="reserved">Reserved</option>
+              <option value="available">For sale</option>
+              <option value="reserved">Taken</option>
               <option value="sold">Sold</option>
             </select>
           </div>
@@ -613,7 +620,7 @@ export default function ApartmentsAdminSection() {
               </span>
             </label>
             <input
-              type="url"
+              type="text"
               value={form.layout_image}
               onChange={(e) =>
                 setForm((f) => ({ ...f, layout_image: e.target.value }))

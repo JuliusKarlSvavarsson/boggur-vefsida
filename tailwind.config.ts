@@ -28,6 +28,15 @@ const config: Config = {
       fontFamily: {
         sans: ["system-ui", "ui-sans-serif", "sans-serif"],
       },
+      keyframes: {
+        heroZoom: {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.06)" },
+        },
+      },
+      animation: {
+        heroZoom: "heroZoom 14s ease-in-out infinite alternate",
+      },
     },
   },
   plugins: [],

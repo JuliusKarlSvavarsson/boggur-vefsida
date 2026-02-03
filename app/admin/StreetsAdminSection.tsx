@@ -6,6 +6,8 @@ type Street = {
   id: string;
   name: string;
   image: string | null;
+  is_featured: boolean;
+  featured_order: number;
   created_at: string;
 };
 
@@ -84,6 +86,8 @@ export default function StreetsAdminSection() {
   const [form, setForm] = useState({
     name: "",
     image: "",
+    is_featured: false,
+    featured_order: 0,
   });
 
   async function load() {
@@ -122,13 +126,18 @@ export default function StreetsAdminSection() {
 
   function resetForm() {
     setEditing(null);
-    setForm({ name: "", image: "" });
+    setForm({ name: "", image: "", is_featured: false, featured_order: 0 });
     setFormError(null);
   }
 
   function startEdit(street: Street) {
     setEditing(street);
-    setForm({ name: street.name, image: street.image ?? "" });
+    setForm({
+      name: street.name,
+      image: street.image ?? "",
+      is_featured: street.is_featured,
+      featured_order: street.featured_order ?? 0,
+    });
     setFormError(null);
   }
 
@@ -147,6 +156,11 @@ export default function StreetsAdminSection() {
       const payload = {
         name,
         image: form.image.trim() || null,
+        is_featured: form.is_featured,
+        featured_order:
+          form.featured_order != null && !Number.isNaN(Number(form.featured_order))
+            ? Number(form.featured_order)
+            : 0,
       };
 
       const isEdit = Boolean(editing);
@@ -233,6 +247,8 @@ export default function StreetsAdminSection() {
               <tr>
                 <th className="px-3 py-2 font-semibold">Name</th>
                 <th className="px-3 py-2 font-semibold">Image</th>
+                <th className="px-3 py-2 font-semibold">Forsíða</th>
+                <th className="px-3 py-2 font-semibold">Röðun</th>
                 <th className="px-3 py-2 font-semibold text-right">Actions</th>
               </tr>
             </thead>
@@ -240,7 +256,7 @@ export default function StreetsAdminSection() {
               {loading && (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={5}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     Loading streets...
@@ -250,7 +266,7 @@ export default function StreetsAdminSection() {
               {!loading && filtered.length === 0 && (
                 <tr>
                   <td
-                    colSpan={3}
+                    colSpan={5}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     No streets found.
@@ -264,6 +280,12 @@ export default function StreetsAdminSection() {
                   </td>
                   <td className="px-3 py-3 text-[11px] text-slate-600">
                     {street.image ? "Custom" : "None"}
+                  </td>
+                  <td className="px-3 py-3 text-[11px] text-slate-600">
+                    {street.is_featured ? "Já" : "Nei"}
+                  </td>
+                  <td className="px-3 py-3 text-[11px] text-slate-600">
+                    {street.featured_order}
                   </td>
                   <td className="px-3 py-3 text-right text-[11px]">
                     <div className="inline-flex gap-2">
@@ -340,6 +362,41 @@ export default function StreetsAdminSection() {
               className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <ImagePreview url={form.image} />
+          </div>
+          <div className="space-y-1 md:col-span-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Birta á forsíðu
+            </label>
+            <label className="inline-flex items-center gap-2 text-xs text-slate-700">
+              <input
+                type="checkbox"
+                checked={form.is_featured}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, is_featured: e.target.checked }))
+                }
+                className="h-3.5 w-3.5 rounded border-slate-300 text-primary focus:ring-primary"
+              />
+              <span>Sýna þessa götu í forsíðu-yfirliti.</span>
+            </label>
+          </div>
+          <div className="space-y-1 md:col-span-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Röðun á forsíðu
+            </label>
+            <input
+              type="number"
+              value={form.featured_order}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  featured_order: Number(e.target.value) || 0,
+                }))
+              }
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <p className="text-[10px] text-slate-500">
+              Minni tala birtist vinstra megin. 0 er sjálfgefið.
+            </p>
           </div>
           <div className="mt-2 flex items-center gap-3 md:col-span-2">
             <button

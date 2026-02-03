@@ -150,10 +150,25 @@ export default function ServicesAdminSection() {
 
     setSaving(true);
     try {
+      const rawImage = form.image.trim();
+      let normalizedImage: string | null = null;
+
+      if (rawImage) {
+        // Allow relative paths like "images/x.jpg" or "\images\x.jpg" as well as
+        // full URLs. Normalize backslashes and ensure a leading slash for
+        // non-http paths.
+        let path = rawImage.replace(/\\/g, "/");
+        const isHttpUrl = /^https?:\/\//i.test(path);
+        if (!isHttpUrl && !path.startsWith("/")) {
+          path = `/${path}`;
+        }
+        normalizedImage = path;
+      }
+
       const payload = {
         title,
         description: form.description.trim() || null,
-        image: form.image.trim() || null,
+        image: normalizedImage,
       };
 
       const isEdit = Boolean(editing);
@@ -361,7 +376,7 @@ export default function ServicesAdminSection() {
               </span>
             </label>
             <input
-              type="url"
+              type="text"
               value={form.image}
               onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
               placeholder="/images/services/xyz.jpg or https://..."
