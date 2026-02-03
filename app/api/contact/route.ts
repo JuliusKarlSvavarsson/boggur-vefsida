@@ -31,15 +31,23 @@ export async function POST(request: Request) {
 
     const emailSubject = subject || `Ný fyrirspurn frá ${name}`;
 
+    // Map internal inquiryType codes from the form to human-readable labels.
+    const inquiryLabelMap: Record<string, string> = {
+      ibudir: "Íbúðir",
+      verktaekni: "Verktakaþjónusta",
+      annad: "Annað",
+    };
+    const inquiryLabel = inquiryType ? inquiryLabelMap[inquiryType] ?? inquiryType : "";
+
     const textLines = [
-      "Ný fyrirspurn af boggur.is",
+      "📩 Ný fyrirspurn frá vefnum",
       "",
-      `Nafn: ${name}`,
-      `Netfang: ${email}`,
-      inquiryType ? `Tegund fyrirspurnar: ${inquiryType}` : "",
-      subject ? `Efni: ${subject}` : "",
+      `👤 Nafn: ${name}`,
+      `📧 Netfang: ${email}`,
+      inquiryLabel ? `🛠️ Tegund fyrirspurnar: ${inquiryLabel}` : "",
+      subject ? `📌 Efni: ${subject}` : "",
       "",
-      "Skilaboð:",
+      "💬 Skilaboð:",
       message,
     ].filter(Boolean);
 
