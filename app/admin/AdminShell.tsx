@@ -18,7 +18,7 @@ const NAV_ITEMS: { href: string; label: string; description?: string }[] = [
   {
     href: "/admin/other-services",
     label: "Önnur þjónusta",
-    description: "Vörur í sölu",
+    description: "Vörur til sölu",
   },
   {
     href: "/admin/team",

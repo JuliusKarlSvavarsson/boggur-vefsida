@@ -122,7 +122,7 @@ export default async function OnnurThjonustaPage() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <header className="max-w-3xl space-y-3">
             <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">
-              Vörur í sölu
+              Vörur til sölu
             </h2>
             <p className="text-sm text-slate-700 sm:text-base sm:leading-relaxed">
               Við framleiðum einnig staðlaðar lausnir sem nýtast í byggingum.
@@ -130,7 +130,7 @@ export default async function OnnurThjonustaPage() {
           </header>
           {products.length === 0 ? (
             <p className="mt-4 text-xs text-slate-600">
-              Engar vörur skráðar enn í "Vörur í sölu". Hægt er að bæta þeim við í
+              Engar vörur skráðar enn í "Vörur til sölu". Hægt er að bæta þeim við í
               admin undir Önnur þjónusta.
             </p>
           ) : (

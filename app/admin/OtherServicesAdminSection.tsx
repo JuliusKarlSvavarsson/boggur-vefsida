@@ -201,10 +201,10 @@ export default function OtherServicesAdminSection() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-slate-900">
-            Önnur þjónusta – Vörur í sölu
+            Önnur þjónusta – Vörur til sölu
           </h2>
           <p className="text-xs text-slate-600">
-            Vörur sem birtast í kaflanum „Vörur í sölu" á síðunni /onnur-thjonusta.
+            Vörur sem birtast í kaflanum „Vörur til sölu" á síðunni /onnur-thjonusta.
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -308,7 +308,7 @@ export default function OtherServicesAdminSection() {
           {editing ? "Uppfæra vöru" : "Bæta við vöru"}
         </h3>
         <p className="mb-4 text-xs text-slate-600">
-          Vörur í sölu nota litla mynd með föstum hæðarmæli; róleg lárétt mynd
+          Vörur til sölu nota litla mynd með föstum hæðarmæli; róleg lárétt mynd
           virkar best.
         </p>
         {formError && (
