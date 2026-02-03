@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const emailSubject = subject || `Ný fyrirspurn frá ${name}`;
+    const emailSubject = "Ný fyrirspurn frá boggur.is";
 
     // Map internal inquiryType codes from the form to human-readable labels.
     const inquiryLabelMap: Record<string, string> = {
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: fromAddress,
+        from: `Boggur Vefsíða <${fromAddress}>`,
         to: [toAddress],
         subject: emailSubject,
         text: textBody,
