@@ -412,8 +412,8 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
     <div className="space-y-10">
       {/* Stage 1 – Street view (only in street mode) */}
       {street && isStreetMode && (
-        <section className="relative flex min-h-[calc(100vh-var(--header-height))] bg-neutral-100 overflow-hidden">
-          <div className="relative flex-1 h-[calc(100vh-var(--header-height))] w-full">
+        <section className="relative flex flex-col lg:flex-row lg:min-h-[calc(100vh-var(--header-height))] bg-neutral-100 overflow-hidden">
+          <div className="relative w-full lg:flex-1 h-[260px] sm:h-[320px] md:h-[360px] lg:h-[calc(100vh-var(--header-height))]">
             <StreetView
               streetImageUrl={street.image}
               streetName={street.name}
@@ -430,8 +430,8 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
             />
           </div>
 
-          <aside className="w-[260px] sm:w-[280px] lg:w-[320px] xl:w-[360px] border-l border-slate-200 bg-white/95">
-            <div className="sticky top-[var(--header-height)] flex h-[calc(100vh-var(--header-height))] flex-col p-4 sm:p-5">
+          <aside className="w-full lg:w-[280px] xl:w-[360px] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white/95">
+            <div className="flex flex-col p-4 sm:p-5 lg:sticky lg:top-[var(--header-height)] lg:h-[calc(100vh-var(--header-height))]">
               <div className="space-y-1">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">
                   BYGGINGAR
@@ -530,10 +530,10 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
       {selectedBuilding && (
         <section
           ref={buildingStageRef}
-          className="relative flex min-h-[calc(100vh-6rem)] bg-neutral-100"
+          className="relative flex flex-col lg:flex-row lg:min-h-[calc(100vh-6rem)] bg-neutral-100"
         >
-          <div className="flex-1">
-            <div className="relative h-[300px] sm:h-[380px] md:h-[420px] lg:h-[calc(100vh-6rem)] w-full">
+          <div className="w-full lg:flex-1">
+            <div className="relative w-full h-[300px] sm:h-[380px] md:h-[420px] lg:h-[calc(100vh-6rem)]">
               {selectedBuilding.layout_image &&
               detail?.apartments &&
               detail.apartments.length > 0 ? (
@@ -576,8 +576,8 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          <aside className="w-[260px] sm:w-[280px] lg:w-[320px] xl:w-[360px] border-l border-slate-200 bg-white/95">
-            <div className="sticky top-24 flex h-[calc(100vh-6rem)] flex-col p-4 sm:p-5">
+          <aside className="w-full lg:w-[280px] xl:w-[360px] border-t lg:border-t-0 lg:border-l border-slate-200 bg-white/95">
+            <div className="flex flex-col p-4 sm:p-5 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)]">
               <div className="space-y-1.5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">
                   ÍBÚÐIR
