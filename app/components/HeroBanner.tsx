@@ -40,7 +40,7 @@ export default function HeroBanner({
         <div className="absolute inset-y-0 inset-x-0 flex items-center">
           <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-10 sm:px-8 lg:px-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">
-              Boggur 2.0
+              Böggur
             </p>
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
               {title}

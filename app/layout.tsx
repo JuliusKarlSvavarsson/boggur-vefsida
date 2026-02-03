@@ -5,8 +5,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Boggur 2.0",
-  description: "Modern Boggur construction and real estate website",
+  title: "Böggur – Byggingar og fasteignaþróun",
+  description:
+    "Böggur sinnir þróun og uppbyggingu íbúðarverkefna ásamt verktakaþjónustu fyrir einstaklinga, húsfélög og fyrirtæki.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
