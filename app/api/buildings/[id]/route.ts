@@ -7,6 +7,18 @@ export async function GET(
 ) {
   const sql = getSql();
 
+  // Lightweight debug: expose which database name this handler is
+  // connected to so we can verify environments without leaking
+  // credentials.
+  const connectionString = process.env.DATABASE_URL ?? "";
+  let dbName: string | null = null;
+  try {
+    const parsed = new URL(connectionString);
+    dbName = parsed.pathname.replace(/^\//, "") || null;
+  } catch {
+    dbName = null;
+  }
+
   const [building] = await sql`
     SELECT id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
     FROM buildings
@@ -36,9 +48,17 @@ export async function GET(
       height,
       created_at
     FROM apartments
-    WHERE building_id = ${params.id}
+    WHERE building_id::text = ${params.id}
     ORDER BY floor DESC, number ASC
   `;
 
-  return NextResponse.json({ building, apartments });
+  return NextResponse.json({
+    building,
+    apartments,
+    _debug: {
+      dbName,
+      buildingId: params.id,
+      apartmentCount: apartments.length,
+    },
+  });
 }

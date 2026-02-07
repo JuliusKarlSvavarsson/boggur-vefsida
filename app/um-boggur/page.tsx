@@ -3,6 +3,8 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import TeamCard from "../components/TeamCard";
 
+export const dynamic = "force-dynamic";
+
 type TeamMember = {
   id: string;
   name: string;
