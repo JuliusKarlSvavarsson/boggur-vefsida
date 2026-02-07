@@ -1,5 +1,14 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import type { Service } from "./ServicesAdminSection";
+import RightDrawer from "./RightDrawer";
+
+type OtherService = {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+  price: string | null;
+  created_at: string;
+};
 
 function Pagination({
   page,
@@ -59,21 +68,23 @@ function ImagePreview({ url, recommended }: { url: string; recommended?: string 
 }
 
 export default function OtherServicesAdminSection() {
-  const [items, setItems] = useState<Service[]>([]);
+  const [items, setItems] = useState<OtherService[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const pageSize = 10;
 
-  const [editing, setEditing] = useState<Service | null>(null);
+  const [editing, setEditing] = useState<OtherService | null>(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
     description: "",
     image: "",
+    price: "",
   });
 
   async function load() {
@@ -82,7 +93,7 @@ export default function OtherServicesAdminSection() {
     try {
       const res = await fetch("/api/admin/other_services", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to load other services");
-      const data: Service[] = await res.json();
+      const data: OtherService[] = await res.json();
       setItems(data);
     } catch (e) {
       setError((e as Error).message ?? "Failed to load other services");
@@ -117,18 +128,28 @@ export default function OtherServicesAdminSection() {
 
   function resetForm() {
     setEditing(null);
-    setForm({ title: "", description: "", image: "" });
+    setForm({ title: "", description: "", image: "", price: "" });
     setFormError(null);
+    setDrawerOpen(false);
   }
 
-  function startEdit(service: Service) {
+  function startEdit(service: OtherService) {
     setEditing(service);
     setForm({
       title: service.title,
       description: service.description ?? "",
       image: service.image ?? "",
+      price: service.price ?? "",
     });
     setFormError(null);
+    setDrawerOpen(true);
+  }
+
+  function startCreate() {
+    setEditing(null);
+    setForm({ title: "", description: "", image: "", price: "" });
+    setFormError(null);
+    setDrawerOpen(true);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -147,6 +168,7 @@ export default function OtherServicesAdminSection() {
         title,
         description: form.description.trim() || null,
         image: form.image.trim() || null,
+        price: form.price.trim() || null,
       };
 
       const isEdit = Boolean(editing);
@@ -217,7 +239,7 @@ export default function OtherServicesAdminSection() {
           />
           <button
             type="button"
-            onClick={resetForm}
+            onClick={startCreate}
             className="h-9 rounded-full border border-slate-200 bg-white px-4 text-xs font-medium text-slate-800 shadow-sm hover:bg-slate-50"
           >
             Bæta við vöru
@@ -233,6 +255,7 @@ export default function OtherServicesAdminSection() {
                 <th className="px-3 py-2 font-semibold">Title</th>
                 <th className="px-3 py-2 font-semibold">Description</th>
                 <th className="px-3 py-2 font-semibold">Image</th>
+                <th className="px-3 py-2 font-semibold">Verð</th>
                 <th className="px-3 py-2 font-semibold text-right">Actions</th>
               </tr>
             </thead>
@@ -240,7 +263,7 @@ export default function OtherServicesAdminSection() {
               {loading && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     Loading other services...
@@ -250,7 +273,7 @@ export default function OtherServicesAdminSection() {
               {!loading && filtered.length === 0 && (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-3 py-4 text-center text-xs text-slate-500"
                   >
                     No other services found.
@@ -269,6 +292,9 @@ export default function OtherServicesAdminSection() {
                   </td>
                   <td className="px-3 py-3 text-[11px] text-slate-600">
                     {service.image ? "Custom" : "Default / none"}
+                  </td>
+                  <td className="px-3 py-3 text-[11px] text-slate-700">
+                    {service.price ?? "—"}
                   </td>
                   <td className="px-3 py-3 text-right text-[11px]">
                     <div className="inline-flex gap-2">
@@ -302,15 +328,12 @@ export default function OtherServicesAdminSection() {
           />
         </div>
       </div>
-
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 shadow-inner">
-        <h3 className="mb-2 text-sm font-semibold text-slate-900">
-          {editing ? "Uppfæra vöru" : "Bæta við vöru"}
-        </h3>
-        <p className="mb-4 text-xs text-slate-600">
-          Vörur til sölu nota litla mynd með föstum hæðarmæli; róleg lárétt mynd
-          virkar best.
-        </p>
+      <RightDrawer
+        open={drawerOpen}
+        onClose={resetForm}
+        title={editing ? "Uppfæra vöru" : "Bæta við vöru"}
+        description="Vörur til sölu nota litla mynd með föstum hæðarmæli; róleg lárétt mynd virkar best."
+      >
         {formError && (
           <p className="mb-3 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
             {formError}
@@ -366,6 +389,18 @@ export default function OtherServicesAdminSection() {
               recommended="Cards use a fixed-height image; wide images are safest."
             />
           </div>
+          <div className="space-y-1 md:col-span-2">
+            <label className="block text-xs font-medium text-slate-800">
+              Verð (valfrjálst)
+            </label>
+            <input
+              type="text"
+              value={form.price}
+              onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+              placeholder={'t.d. 25.000 kr. eða "Verð eftir samkomulagi"'}
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
           <div className="mt-2 flex items-center gap-3 md:col-span-2">
             <button
               type="submit"
@@ -391,7 +426,7 @@ export default function OtherServicesAdminSection() {
             )}
           </div>
         </form>
-      </div>
+      </RightDrawer>
     </div>
   );
 }

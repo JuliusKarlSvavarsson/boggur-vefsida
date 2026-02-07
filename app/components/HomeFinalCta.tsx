@@ -21,7 +21,7 @@ export default function HomeFinalCta() {
               Hafa samband
             </Link>
             <Link
-              href="/projects"
+              href="/building"
               className="text-slate-600 underline-offset-4 hover:underline hover:text-slate-800 transition-colors duration-200"
             >
               Skoða íbúðir

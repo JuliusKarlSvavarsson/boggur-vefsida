@@ -11,6 +11,7 @@ export async function PUT(
   const title = (body.title ?? "").trim();
   const description = body.description ?? null;
   const image = body.image ?? null;
+  const price = body.price ?? null;
 
   if (!title) {
     return NextResponse.json(
@@ -21,9 +22,9 @@ export async function PUT(
 
   const [service] = await sql`
     UPDATE other_services
-    SET title = ${title}, description = ${description}, image = ${image}
+    SET title = ${title}, description = ${description}, image = ${image}, price = ${price}
     WHERE id = ${params.id}
-    RETURNING id, title, description, image, created_at
+    RETURNING id, title, description, image, price, created_at
   `;
 
   if (!service) {

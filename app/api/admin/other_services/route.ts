@@ -5,7 +5,7 @@ export async function GET() {
   const sql = getSql();
 
   const services = await sql`
-    SELECT id, title, description, image, created_at
+    SELECT id, title, description, image, price, created_at
     FROM other_services
     ORDER BY created_at ASC
   `;
@@ -20,6 +20,7 @@ export async function POST(request: Request) {
   const title = (body.title ?? "").trim();
   const description = body.description ?? null;
   const image = body.image ?? null;
+  const price = body.price ?? null;
 
   if (!title) {
     return NextResponse.json(
@@ -29,9 +30,9 @@ export async function POST(request: Request) {
   }
 
   const [service] = await sql`
-    INSERT INTO other_services (title, description, image)
-    VALUES (${title}, ${description}, ${image})
-    RETURNING id, title, description, image, created_at
+    INSERT INTO other_services (title, description, image, price)
+    VALUES (${title}, ${description}, ${image}, ${price})
+    RETURNING id, title, description, image, price, created_at
   `;
 
   return NextResponse.json(service, { status: 201 });

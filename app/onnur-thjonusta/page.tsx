@@ -25,6 +25,7 @@ type OtherServiceProduct = {
   title: string;
   description: string | null;
   image: string | null;
+  price: string | null;
 };
 
 async function fetchProducts(): Promise<OtherServiceProduct[]> {
@@ -148,6 +149,11 @@ export default async function OnnurThjonustaPage() {
                       <h3 className="text-sm font-semibold text-slate-900">
                         {product.title}
                       </h3>
+                      {product.price && (
+                        <p className="text-xs font-medium text-slate-900">
+                          {product.price}
+                        </p>
+                      )}
                       <p>{product.description}</p>
                     </div>
                     <div className="relative h-32 overflow-hidden rounded-md border border-slate-200 bg-slate-100 sm:h-36">

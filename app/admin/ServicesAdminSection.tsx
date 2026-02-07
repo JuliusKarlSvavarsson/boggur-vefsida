@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import RightDrawer from "./RightDrawer";
 
 export type Service = {
   id: string;
@@ -76,6 +77,7 @@ export default function ServicesAdminSection() {
   const [editing, setEditing] = useState<Service | null>(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -126,6 +128,7 @@ export default function ServicesAdminSection() {
     setEditing(null);
     setForm({ title: "", description: "", image: "" });
     setFormError(null);
+    setDrawerOpen(false);
   }
 
   function startEdit(service: Service) {
@@ -136,6 +139,14 @@ export default function ServicesAdminSection() {
       image: service.image ?? "",
     });
     setFormError(null);
+    setDrawerOpen(true);
+  }
+
+  function startCreate() {
+    setEditing(null);
+    setForm({ title: "", description: "", image: "" });
+    setFormError(null);
+    setDrawerOpen(true);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -238,7 +249,7 @@ export default function ServicesAdminSection() {
           />
           <button
             type="button"
-            onClick={resetForm}
+            onClick={startCreate}
             className="h-9 rounded-full border border-slate-200 bg-white px-4 text-xs font-medium text-slate-800 shadow-sm hover:bg-slate-50"
           >
             Add new service
@@ -323,15 +334,12 @@ export default function ServicesAdminSection() {
           />
         </div>
       </div>
-
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 shadow-inner">
-        <h3 className="mb-2 text-sm font-semibold text-slate-900">
-          {editing ? "Edit service" : "Add new service"}
-        </h3>
-        <p className="mb-4 text-xs text-slate-600">
-          Services typically use an 800×600 card-style image. Any size is
-          accepted, but it will be cropped to avoid breaking the layout.
-        </p>
+      <RightDrawer
+        open={drawerOpen}
+        onClose={resetForm}
+        title={editing ? "Edit service" : "Add new service"}
+        description="Services typically use an 800×600 card-style image. Any size is accepted, but it will be cropped to avoid breaking the layout."
+      >
         {formError && (
           <p className="mb-3 rounded-md border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-700">
             {formError}
@@ -412,7 +420,7 @@ export default function ServicesAdminSection() {
             )}
           </div>
         </form>
-      </div>
+      </RightDrawer>
     </div>
   );
 }

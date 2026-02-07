@@ -7,7 +7,7 @@ export async function GET() {
   const sql = getSql();
 
   const otherServices = await sql`
-    SELECT id, title, description, image, created_at
+    SELECT id, title, description, image, price, created_at
     FROM other_services
     ORDER BY created_at ASC
   `;
