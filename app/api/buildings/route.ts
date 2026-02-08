@@ -54,6 +54,7 @@ export async function GET(request: Request) {
           b.description,
           b.thumbnail,
           b.layout_image,
+          b.minimap_svg,
           b.status,
           b.is_featured,
           b.display_order,
