@@ -308,7 +308,7 @@ export default function ApartmentDetailsPanel({
         Skipta um íbúð með því að velja aðra í uppdrættinum.
       </p>
 
-      <div className="mt-4 grid gap-5 md:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
+      <div className="mt-4 grid gap-5 md:grid-cols-[minmax(0,8fr)_minmax(0,3fr)]">
         {/* Left column – plan image */}
         <div className="flex flex-col justify-start">
           <div className="rounded-md border border-slate-200 bg-[#F7F6F3] px-3 py-3">
@@ -318,12 +318,12 @@ export default function ApartmentDetailsPanel({
                 onClick={() => setIsPlanModalOpen(true)}
                 className="group w-full focus:outline-none"
               >
-                <div className="relative mx-auto aspect-[4/3] w-full max-w-[820px]">
+                <div className="relative mx-auto aspect-[3/2] w-full max-w-[960px]">
                   <Image
                     src={details.planImageUrl}
                     alt={details.name}
                     fill
-                    sizes="(min-width: 1024px) 640px, 100vw"
+                    sizes="(min-width: 1280px) 900px, (min-width: 1024px) 720px, 100vw"
                     className="object-contain"
                   />
                 </div>

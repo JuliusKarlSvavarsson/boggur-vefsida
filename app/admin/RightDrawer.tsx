@@ -49,7 +49,7 @@ export default function RightDrawer({
         previouslyFocused.current.focus();
       }
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
