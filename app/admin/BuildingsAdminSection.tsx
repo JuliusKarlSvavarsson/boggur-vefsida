@@ -15,6 +15,7 @@ type Building = {
   description: string | null;
   thumbnail: string | null;
   layout_image: string | null;
+  minimap_svg: string | null;
   status: string | null;
   is_featured: boolean;
   display_order: number | null;
@@ -99,6 +100,7 @@ export default function BuildingsAdminSection() {
     description: "",
     thumbnail: "",
     layout_image: "",
+    minimap_svg: "",
     status: "",
     is_featured: false,
     display_order: "" as string | number,
@@ -161,6 +163,7 @@ export default function BuildingsAdminSection() {
       description: "",
       thumbnail: "",
       layout_image: "",
+      minimap_svg: "",
       status: "",
       is_featured: false,
       display_order: "",
@@ -177,6 +180,7 @@ export default function BuildingsAdminSection() {
       description: building.description ?? "",
       thumbnail: building.thumbnail ?? "",
       layout_image: building.layout_image ?? "",
+      minimap_svg: building.minimap_svg ?? "",
       status: building.status ?? "",
       is_featured: building.is_featured ?? false,
       display_order:
@@ -220,6 +224,7 @@ export default function BuildingsAdminSection() {
         description: form.description.trim() || null,
         thumbnail: form.thumbnail.trim() || null,
         layout_image: form.layout_image.trim() || null,
+        minimap_svg: form.minimap_svg.trim() || null,
         status: form.status.trim() || null,
         is_featured: Boolean(form.is_featured),
         display_order,
@@ -551,6 +556,24 @@ export default function BuildingsAdminSection() {
             <ImagePreview
               url={form.layout_image}
               label="This is the base 2D plan. Apartment overlays use percentage coordinates so any aspect ratio is safe."
+            />
+          </div>
+          <div className="space-y-1 md:col-span-1">
+            <label className="block text-xs font-medium text-slate-800">
+              Minimap SVG URL
+            </label>
+            <input
+              type="text"
+              value={form.minimap_svg}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, minimap_svg: e.target.value }))
+              }
+              placeholder="/images/projects/.../building-minimap.svg or https://..."
+              className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+            <ImagePreview
+              url={form.minimap_svg}
+              label="Optional: separate SVG used for the sidebar minimap overview. If empty, a default SVG path based on slug is used."
             />
           </div>
           <div className="mt-2 flex items-center gap-3 md:col-span-2">

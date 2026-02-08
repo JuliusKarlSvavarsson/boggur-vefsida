@@ -14,6 +14,7 @@ export async function PUT(
   const description = body.description ?? null;
   const thumbnail = body.thumbnail ?? null;
   const layoutImage = body.layout_image ?? null;
+  const minimapSvg = body.minimap_svg ?? null;
   const status = body.status ?? null;
   const isFeatured = Boolean(body.is_featured);
   const rawDisplayOrder = body.display_order;
@@ -42,11 +43,12 @@ export async function PUT(
       description = ${description},
       thumbnail = ${thumbnail},
       layout_image = ${layoutImage},
+      minimap_svg = ${minimapSvg},
       status = ${status},
       is_featured = ${isFeatured},
       display_order = ${displayOrder}
     WHERE id = ${params.id}
-    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
+    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, minimap_svg, status, is_featured, display_order, created_at
   `;
 
   if (!building) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { getApartmentVisual } from "./apartmentVisual";
 
 type MinimapApartment = {
@@ -34,6 +34,14 @@ export default function BuildingMinimap({
   onApartmentSelect,
 }: BuildingMinimapProps) {
   const svgContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const apartmentsKey = useMemo(
+    () =>
+      apartments
+        .map((apt) => `${apt.id}:${apt.number}:${apt.status ?? ""}`)
+        .join("|"),
+    [apartments],
+  );
 
   useEffect(() => {
     const src = svgSrc;
@@ -169,7 +177,7 @@ export default function BuildingMinimap({
     // rebind on every hover/selection. This mirrors BuildingLayoutView
     // and keeps the DOM stable while visual state is managed by the
     // separate highlighting effect below.
-  }, [svgSrc]);
+  }, [svgSrc, apartmentsKey]);
 
   useEffect(() => {
     if (!svgContainerRef.current) return;

@@ -22,6 +22,7 @@ type Building = {
   description: string | null;
   thumbnail: string | null;
   layout_image: string | null;
+  minimap_svg: string | null;
   status: string | null;
   is_featured: boolean;
   display_order: number | null;
@@ -813,6 +814,7 @@ function BuildingForm({
     description: building?.description ?? "",
     thumbnail: building?.thumbnail ?? "",
     layout_image: building?.layout_image ?? "",
+    minimap_svg: building?.minimap_svg ?? "",
     status: building?.status ?? "",
     is_featured: building?.is_featured ?? false,
     display_order:
@@ -831,6 +833,7 @@ function BuildingForm({
       description: building?.description ?? "",
       thumbnail: building?.thumbnail ?? "",
       layout_image: building?.layout_image ?? "",
+      minimap_svg: building?.minimap_svg ?? "",
       status: building?.status ?? "",
       is_featured: building?.is_featured ?? false,
       display_order:
@@ -874,6 +877,7 @@ function BuildingForm({
         description: form.description.trim() || null,
         thumbnail: form.thumbnail.trim() || null,
         layout_image: form.layout_image.trim() || null,
+        minimap_svg: form.minimap_svg.trim() || null,
         status: form.status.trim() || null,
         is_featured: Boolean(form.is_featured),
         display_order,
@@ -1037,6 +1041,20 @@ function BuildingForm({
           value={form.layout_image}
           onChange={(e) => setForm((f) => ({ ...f, layout_image: e.target.value }))}
           placeholder="/images/buildings/layout.jpg or https://..."
+          className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      </div>
+      <div className="space-y-1 md:col-span-2">
+        <label className="block text-xs font-medium text-slate-800">
+          Minimap SVG URL
+        </label>
+        <input
+          type="text"
+          value={form.minimap_svg}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, minimap_svg: e.target.value }))
+          }
+          placeholder="/images/projects/.../building-minimap.svg or https://..."
           className="h-9 w-full rounded-md border border-slate-200 px-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>

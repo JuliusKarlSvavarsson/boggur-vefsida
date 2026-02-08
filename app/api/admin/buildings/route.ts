@@ -8,13 +8,13 @@ export async function GET(request: Request) {
 
   const buildings = streetId
     ? await sql`
-        SELECT id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
+        SELECT id, title, slug, street_id, description, thumbnail, layout_image, minimap_svg, status, is_featured, display_order, created_at
         FROM buildings
         WHERE street_id = ${streetId}
         ORDER BY created_at ASC
       `
     : await sql`
-        SELECT id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
+        SELECT id, title, slug, street_id, description, thumbnail, layout_image, minimap_svg, status, is_featured, display_order, created_at
         FROM buildings
         ORDER BY created_at ASC
       `;
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
   const description = body.description ?? null;
   const thumbnail = body.thumbnail ?? null;
   const layoutImage = body.layout_image ?? null;
+  const minimapSvg = body.minimap_svg ?? null;
   const status = body.status ?? null;
   const isFeatured = Boolean(body.is_featured);
   const rawDisplayOrder = body.display_order;
@@ -52,9 +53,9 @@ export async function POST(request: Request) {
   }
 
   const [building] = await sql`
-    INSERT INTO buildings (title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order)
-    VALUES (${title}, ${slug}, ${streetId}, ${description}, ${thumbnail}, ${layoutImage}, ${status}, ${isFeatured}, ${displayOrder})
-    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, status, is_featured, display_order, created_at
+    INSERT INTO buildings (title, slug, street_id, description, thumbnail, layout_image, minimap_svg, status, is_featured, display_order)
+    VALUES (${title}, ${slug}, ${streetId}, ${description}, ${thumbnail}, ${layoutImage}, ${minimapSvg}, ${status}, ${isFeatured}, ${displayOrder})
+    RETURNING id, title, slug, street_id, description, thumbnail, layout_image, minimap_svg, status, is_featured, display_order, created_at
   `;
 
   return NextResponse.json(building, { status: 201 });

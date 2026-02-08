@@ -1,0 +1,36 @@
+<svg
+  width="1920"
+  height="1080"
+  viewBox="0 0 1920 1080"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    id="104"
+    d="M757 499L789 486.5L1134 435.5H1372L1388 426.5H1659.5V435.5L1622 444.5V627.5L1463.5 663H1416L1285.5 687.5L1005.5 647L949 663L789 647V499H757Z"
+    stroke="transparent"
+    fill="transparent"
+    style="cursor: pointer;"
+  />
+  <path
+    id="103"
+    d="M586 611.5V486.5L905 435.5H1129L787 486.5V640L586 611.5Z"
+    stroke="transparent"
+    fill="transparent"
+    style="cursor: pointer;"
+  />
+  <path
+    id="102"
+    d="M676 437.5L385 483V493.5H403V594L586 613.5V483L896.5 437.5H676Z"
+    stroke="transparent"
+    fill="transparent"
+    style="cursor: pointer;"
+  />
+  <path
+    id="101"
+    d="M330.5 458.5L320 459.448M320 459.448L175.5 472.5V485H209V582L263.5 592.5L348 604.5L404.5 592.5V488H385V481L673 437.5H633.5L667 430H545.5L320 459.448Z"
+    stroke="transparent"
+    fill="transparent"
+    style="cursor: pointer;"
+  />
+</svg>

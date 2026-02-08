@@ -22,6 +22,7 @@ type Building = {
   description: string | null;
   thumbnail: string | null;
   layout_image: string | null;
+  minimap_svg?: string | null;
   street_svg_id?: string | null;
   // Optional aggregates from /api/buildings
   total_apartments?: number | string | null;
@@ -49,14 +50,30 @@ type BuildingDetailResponse = {
 };
 
 function resolveMinimapSvgUrl(building: Building | null, floor: number | null) {
-  if (!building || !building.slug) return null;
+  if (!building) return null;
+
+  // Prefer an explicit minimap SVG path from the database when provided.
+  if (typeof building.minimap_svg === "string") {
+    let src = building.minimap_svg.trim();
+    if (src) {
+      src = src.replace(/\\/g, "/");
+      const isHttp = src.startsWith("http://") || src.startsWith("https://");
+      const isRootRelative = src.startsWith("/");
+      if (!isHttp && !isRootRelative) {
+        src = `/${src.replace(/^\/+/, "")}`;
+      }
+      return src;
+    }
+  }
+
+  if (!building.slug) return null;
   const slug = building.slug;
   const basePath = `/images/buildings/${slug}`;
 
   // Special-case Hagaflöt 2: slug is 'hagaflot-2' but assets live under
-  // /images/buildings/hagaflot2/hagaflot2-2D.svg.
+  // /images/projects/Hagaflot/hagaflot2/hagaflot-2.svg.
   if (slug === "hagaflot-2") {
-    return "/images/buildings/hagaflot2/hagaflot2-2D.svg";
+    return "/images/projects/Hagaflot/hagaflot2/hagaflot-2.svg";
   }
 
   // Floor-specific SVGs (convention-based)
