@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSql } from "@/app/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   _request: Request,
   { params }: { params: { id: string } },
@@ -48,7 +50,7 @@ export async function GET(
       height,
       created_at
     FROM apartments
-    WHERE building_id::text = ${params.id}
+    WHERE building_id = ${building.id}
     ORDER BY floor DESC, number ASC
   `;
 
