@@ -145,15 +145,6 @@ export default async function OnnurThjonustaPage() {
                     key={product.id}
                     className="space-y-2 text-sm text-slate-700"
                   >
-                    <div className="relative h-40 overflow-hidden rounded-md border border-slate-200 bg-slate-100 sm:h-48">
-                      <Image
-                        src={imageSrc}
-                        alt={product.title}
-                        fill
-                        sizes="(min-width: 1024px) 14rem, (min-width: 640px) 50vw, 100vw"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
                     <div className="space-y-1">
                       <h3 className="text-sm font-semibold text-slate-900">
                         {product.title}
@@ -163,8 +154,17 @@ export default async function OnnurThjonustaPage() {
                           {product.price}
                         </p>
                       )}
-                      <p>{product.description}</p>
                     </div>
+                    <div className="relative h-40 overflow-hidden rounded-md border border-slate-200 bg-slate-100 sm:h-48">
+                      <Image
+                        src={imageSrc}
+                        alt={product.title}
+                        fill
+                        sizes="(min-width: 1024px) 14rem, (min-width: 640px) 50vw, 100vw"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <p>{product.description}</p>
                   </article>
                 );
               })}

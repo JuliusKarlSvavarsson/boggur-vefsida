@@ -90,6 +90,7 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
   const [hoveredBuildingId, setHoveredBuildingId] = useState<string | null>(
     null,
   );
+  const [detailReloadToken, setDetailReloadToken] = useState(0);
   const infoPanelRef = useRef<HTMLDivElement | null>(null);
   const buildingStageRef = useRef<HTMLDivElement | null>(null);
   const streetSidebarListRef = useRef<HTMLDivElement | null>(null);
@@ -194,6 +195,19 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
     [buildings, street],
   );
 
+  const handleSelectBuilding = (id: string) => {
+    setSelectedBuildingId((prev) => {
+      if (prev === id) {
+        // Same building re-selected – force a detail reload.
+        setDetailReloadToken((token) => token + 1);
+        return prev;
+      }
+      return id;
+    });
+    setSelectedApartmentId(null);
+    setHoveredBuildingId(null);
+  };
+
   useEffect(() => {
     if (!selectedBuilding || !selectedBuilding.id) {
       setDetail(null);
@@ -230,7 +244,7 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
     }
 
     void loadDetail();
-  }, [selectedBuilding]);
+  }, [selectedBuilding, detailReloadToken]);
 
   // Smoothly scroll the building stage into view when a building is picked
   // from the street stage in street mode.
@@ -422,10 +436,7 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
               variant="overlay"
               selectedBuildingId={selectedBuilding?.id ?? null}
               hoveredBuildingId={hoveredBuildingId}
-              onBuildingSelect={(id) => {
-                setSelectedBuildingId(id);
-                setSelectedApartmentId(null);
-              }}
+              onBuildingSelect={handleSelectBuilding}
               onBuildingHoverChange={setHoveredBuildingId}
             />
           </div>
@@ -466,11 +477,7 @@ export default function BuildingDetailClient({ slug }: { slug: string }) {
                     <button
                       key={b.id}
                       type="button"
-                      onClick={() => {
-                        setSelectedBuildingId(b.id);
-                        setSelectedApartmentId(null);
-                        setHoveredBuildingId(null);
-                      }}
+                      onClick={() => handleSelectBuilding(b.id)}
                       onMouseEnter={() => setHoveredBuildingId(b.id)}
                       onMouseLeave={() => setHoveredBuildingId(null)}
                       data-street-building-row-id={b.id}

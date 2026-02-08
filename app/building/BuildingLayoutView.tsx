@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getApartmentVisual } from "./apartmentVisual";
 
 type LayoutApartment = {
@@ -61,6 +61,14 @@ export default function BuildingLayoutView({
   const svgContainerRef = useRef<HTMLDivElement | null>(null);
 
   const layoutSvgUrl = deriveSvgUrlFromImage(layoutImageUrl);
+
+  const apartmentsKey = useMemo(
+    () =>
+      apartments
+        .map((apt) => `${apt.id}:${apt.number}:${apt.status ?? ""}`)
+        .join("|"),
+    [apartments],
+  );
 
   const [svgReady, setSvgReady] = useState(false);
 
@@ -185,7 +193,7 @@ export default function BuildingLayoutView({
       if (!svgContainerRef.current) return;
       svgContainerRef.current.innerHTML = "";
     };
-  }, [layoutSvgUrl]);
+  }, [layoutSvgUrl, apartmentsKey]);
 
   // Apply clear default / hover / selected / dimmed states based on
   // hoveredApartmentId and selectedApartmentId, using shared visuals.
