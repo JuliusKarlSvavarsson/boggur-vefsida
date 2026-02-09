@@ -40,7 +40,17 @@ type ApartmentRow = {
   building_layout_image: string | null;
 };
 
-const HOOKS: string[] = [
+type SocialResponseItem = {
+  type: SocialItemType;
+  id: string;
+  title: string;
+  url: string;
+  image_url: string;
+  caption: string;
+  caption_id: string;
+};
+
+const DEFAULT_HOOKS: string[] = [
   "🔥 Nýtt í sölu",
   "Vönduð eign",
   "Nýtt á síðunni",
@@ -48,7 +58,7 @@ const HOOKS: string[] = [
   "Tilbúið til afhendingar",
 ];
 
-const CTAS: string[] = [
+const DEFAULT_CTAS: string[] = [
   "Skoðaðu nánar 👇",
   "Sjáðu frekari upplýsingar á síðunni",
   "Hafðu samband fyrir nánari upplýsingar",
@@ -75,11 +85,18 @@ function toAbsoluteUrl(baseUrl: string, url: string | null): string | null {
   return `${baseUrl}${path}`;
 }
 
-function buildCaption(title: string): { caption: string; captionId: string } {
-  const hookIndex = Math.floor(Math.random() * HOOKS.length);
-  const ctaIndex = Math.floor(Math.random() * CTAS.length);
-  const hook = HOOKS[hookIndex];
-  const cta = CTAS[ctaIndex];
+function buildCaption(
+  title: string,
+  hooks: string[],
+  ctas: string[],
+): { caption: string; captionId: string } {
+  const safeHooks = hooks.length > 0 ? hooks : DEFAULT_HOOKS;
+  const safeCtas = ctas.length > 0 ? ctas : DEFAULT_CTAS;
+
+  const hookIndex = Math.floor(Math.random() * safeHooks.length);
+  const ctaIndex = Math.floor(Math.random() * safeCtas.length);
+  const hook = safeHooks[hookIndex];
+  const cta = safeCtas[ctaIndex];
 
   // Pattern: hook — title. CTA
   let caption = `${hook} — ${title}. ${cta}`;
@@ -112,6 +129,66 @@ export async function GET(request: Request) {
   const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
   const cutoffIso = new Date(now - fourteenDaysMs).toISOString();
 
+  // Load dynamic caption phrases (hooks + CTAs) from DB if available
+  let hooks: string[] = [];
+  let ctas: string[] = [];
+
+  try {
+    const phraseRows = (await sql`
+      SELECT kind, text, active
+      FROM social_phrases
+      WHERE active = true
+      ORDER BY created_at ASC, id ASC
+    `) as { kind: string; text: string; active: boolean }[];
+
+    hooks = phraseRows
+      .filter((row) => row.kind === "hook" && row.text.trim() !== "")
+      .map((row) => row.text.trim());
+    ctas = phraseRows
+      .filter((row) => row.kind === "cta" && row.text.trim() !== "")
+      .map((row) => row.text.trim());
+  } catch {
+    // Ignore errors and fall back to defaults in buildCaption
+  }
+
+  // Load dynamic weights from DB (fallback to sensible defaults)
+  let apartmentWeight = 50;
+  let buildingWeight = 25;
+  let projectWeight = 13;
+  let serviceWeight = 12;
+
+  try {
+    const settingsRows = (await sql`
+      SELECT apartment_weight, building_weight, project_weight, service_weight
+      FROM social_settings
+      ORDER BY id
+      LIMIT 1
+    `) as {
+      apartment_weight: number | null;
+      building_weight: number | null;
+      project_weight: number | null;
+      service_weight: number | null;
+    }[];
+
+    if (settingsRows && settingsRows.length > 0) {
+      const s = settingsRows[0];
+      apartmentWeight = Math.max(0, Math.round(Number(s.apartment_weight ?? apartmentWeight)));
+      buildingWeight = Math.max(0, Math.round(Number(s.building_weight ?? buildingWeight)));
+      projectWeight = Math.max(0, Math.round(Number(s.project_weight ?? projectWeight)));
+      serviceWeight = Math.max(0, Math.round(Number(s.service_weight ?? serviceWeight)));
+
+      // Avoid a situation where all weights are 0 by keeping defaults
+      if (apartmentWeight + buildingWeight + projectWeight + serviceWeight === 0) {
+        apartmentWeight = 50;
+        buildingWeight = 25;
+        projectWeight = 13;
+        serviceWeight = 12;
+      }
+    }
+  } catch {
+    // Ignore and keep default weights
+  }
+
   // 0) Prefer individual available apartments first
   const apartmentsResult = (await sql`
     SELECT
@@ -137,6 +214,7 @@ export async function GET(request: Request) {
       a.created_at ASC
     LIMIT 1
   `) as ApartmentRow[];
+  let apartmentItem: SocialResponseItem | null = null;
 
   if (apartmentsResult.length > 0) {
     const apartment = apartmentsResult[0];
@@ -152,19 +230,17 @@ export async function GET(request: Request) {
     if (imageUrl) {
       const pageUrl = addUtm(`${baseUrl}/building/${apartment.building_slug}`);
       const title = `${apartment.building_title} – íbúð ${apartment.number}`;
-      const { caption, captionId } = buildCaption(title);
+      const { caption, captionId } = buildCaption(title, hooks, ctas);
 
-      return NextResponse.json({
-        item: {
-          type: "apartment" as SocialItemType,
-          id: apartment.id,
-          title,
-          url: pageUrl,
-          image_url: imageUrl,
-          caption,
-          caption_id: captionId,
-        },
-      });
+      apartmentItem = {
+        type: "apartment",
+        id: apartment.id,
+        title,
+        url: pageUrl,
+        image_url: imageUrl,
+        caption,
+        caption_id: captionId,
+      };
     }
   }
 
@@ -191,6 +267,7 @@ export async function GET(request: Request) {
       b.created_at ASC
     LIMIT 1
   `) as BuildingRow[];
+  let buildingItem: SocialResponseItem | null = null;
 
   if (buildingsResult.length > 0) {
     const building = buildingsResult[0];
@@ -199,19 +276,17 @@ export async function GET(request: Request) {
 
     if (imageUrl) {
       const pageUrl = addUtm(`${baseUrl}/building/${building.slug}`);
-      const { caption, captionId } = buildCaption(building.title);
+      const { caption, captionId } = buildCaption(building.title, hooks, ctas);
 
-      return NextResponse.json({
-        item: {
-          type: "building" as SocialItemType,
-          id: building.id,
-          title: building.title,
-          url: pageUrl,
-          image_url: imageUrl,
-          caption,
-          caption_id: captionId,
-        },
-      });
+      buildingItem = {
+        type: "building",
+        id: building.id,
+        title: building.title,
+        url: pageUrl,
+        image_url: imageUrl,
+        caption,
+        caption_id: captionId,
+      };
     }
   }
 
@@ -237,6 +312,7 @@ export async function GET(request: Request) {
       p.created_at ASC
     LIMIT 1
   `) as ProjectRow[];
+  let projectItem: SocialResponseItem | null = null;
 
   if (projectsResult.length > 0) {
     const project = projectsResult[0];
@@ -244,19 +320,17 @@ export async function GET(request: Request) {
 
     if (imageUrl) {
       const pageUrl = addUtm(`${baseUrl}/projects/${project.slug}`);
-      const { caption, captionId } = buildCaption(project.title);
+      const { caption, captionId } = buildCaption(project.title, hooks, ctas);
 
-      return NextResponse.json({
-        item: {
-          type: "project" as SocialItemType,
-          id: project.id,
-          title: project.title,
-          url: pageUrl,
-          image_url: imageUrl,
-          caption,
-          caption_id: captionId,
-        },
-      });
+      projectItem = {
+        type: "project",
+        id: project.id,
+        title: project.title,
+        url: pageUrl,
+        image_url: imageUrl,
+        caption,
+        caption_id: captionId,
+      };
     }
   }
 
@@ -277,6 +351,7 @@ export async function GET(request: Request) {
       s.created_at ASC
     LIMIT 1
   `) as ServiceRow[];
+  let serviceItem: SocialResponseItem | null = null;
 
   if (servicesResult.length > 0) {
     const service = servicesResult[0];
@@ -284,22 +359,53 @@ export async function GET(request: Request) {
 
     if (imageUrl) {
       const pageUrl = addUtm(`${baseUrl}/thjonustur`);
-      const { caption, captionId } = buildCaption(service.title);
+      const { caption, captionId } = buildCaption(service.title, hooks, ctas);
 
-      return NextResponse.json({
-        item: {
-          type: "service" as SocialItemType,
-          id: service.id,
-          title: service.title,
-          url: pageUrl,
-          image_url: imageUrl,
-          caption,
-          caption_id: captionId,
-        },
-      });
+      serviceItem = {
+        type: "service",
+        id: service.id,
+        title: service.title,
+        url: pageUrl,
+        image_url: imageUrl,
+        caption,
+        caption_id: captionId,
+      };
     }
   }
 
-  // Nothing suitable found
-  return NextResponse.json({ item: null });
+  // Choose between available candidates using weighted random
+  const candidates: { item: SocialResponseItem; weight: number }[] = [];
+
+  if (apartmentItem) {
+    candidates.push({ item: apartmentItem, weight: apartmentWeight });
+  }
+  if (buildingItem) {
+    candidates.push({ item: buildingItem, weight: buildingWeight });
+  }
+  if (projectItem) {
+    candidates.push({ item: projectItem, weight: projectWeight });
+  }
+  if (serviceItem) {
+    candidates.push({ item: serviceItem, weight: serviceWeight });
+  }
+
+  if (candidates.length === 0) {
+    // Nothing suitable found
+    return NextResponse.json({ item: null });
+  }
+
+  const totalWeight = candidates.reduce((sum, c) => sum + c.weight, 0);
+  const rand = Math.random() * totalWeight;
+  let cumulative = 0;
+  let chosen = candidates[0];
+
+  for (const candidate of candidates) {
+    cumulative += candidate.weight;
+    if (rand <= cumulative) {
+      chosen = candidate;
+      break;
+    }
+  }
+
+  return NextResponse.json({ item: chosen.item });
 }

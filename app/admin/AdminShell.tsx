@@ -21,6 +21,11 @@ const NAV_ITEMS: { href: string; label: string; description?: string }[] = [
     description: "Vörur til sölu",
   },
   {
+    href: "/admin/social",
+    label: "Social media",
+    description: "Sjálfvirkar Facebook færslur",
+  },
+  {
     href: "/admin/team",
     label: "Team Members",
     description: "Owners / team grid",

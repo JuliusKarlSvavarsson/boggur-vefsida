@@ -283,18 +283,7 @@ export default function ApartmentDetailsPanel({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-slate-500">
-            ÍBÚÐ
-          </p>
-          <h2 className="mt-1 text-lg font-semibold text-slate-900 sm:text-xl">
-            {details.name}
-          </h2>
-          {details.buildingName && (
-            <p className="text-xs text-slate-500">{details.buildingName}</p>
-          )}
-        </div>
+      <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-baseline sm:justify-end">
         <div className="mt-1 sm:mt-0">
           <p
             className={`border-l-2 pl-3 text-xs sm:text-sm ${statusTheme.borderClass} ${statusTheme.textClass}`}
